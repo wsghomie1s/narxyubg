@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NarxyUBG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link id="faviconLink" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%238b5cf6' d='M24 4l4.8 14.8H44l-12 9.2 4.6 14.8L24 33.6 11.4 42.8 16 28 4 18.8h15.2z'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#08080c;--bg-2:#0e0e14;--surface:rgba(255,255,255,.035);--surface-2:rgba(255,255,255,.06);--surface-3:rgba(255,255,255,.09);--border:rgba(255,255,255,.08);--border-2:rgba(255,255,255,.14);--text:#f4f4f6;--text-dim:#8a8a96;--text-mute:#5a5a66;--accent:#8b5cf6;--accent-2:#a78bfa;--accent-glow:rgba(139,92,246,.22);--green:#22c55e;--red:#ef4444;--nav-h:60px;--subnav-h:52px;--font:'Inter',system-ui,-apple-system,sans-serif;--shadow:0 12px 40px rgba(0,0,0,.5);}
+body[data-theme="matrix"]{--bg:#000800;--bg-2:#051005;--accent:#22c55e;--accent-2:#4ade80;--accent-glow:rgba(34,197,94,.22);--text-dim:#5a8a6a;}
+body[data-theme="cyber"]{--bg:#020a14;--bg-2:#061422;--accent:#06b6d4;--accent-2:#22d3ee;--accent-glow:rgba(6,182,212,.22);}
+body[data-theme="crimson"]{--bg:#0a0202;--bg-2:#180505;--accent:#ef4444;--accent-2:#f87171;--accent-glow:rgba(239,68,68,.22);}
+body[data-theme="sunset"]{--bg:#0f0508;--bg-2:#1c0a10;--accent:#f97316;--accent-2:#fb923c;--accent-glow:rgba(249,115,22,.22);}
+body[data-theme="nord"]{--bg:#2e3440;--bg-2:#3b4252;--surface:rgba(255,255,255,.06);--surface-2:rgba(255,255,255,.1);--text:#eceff4;--text-dim:#a3aab8;--accent:#88c0d0;--accent-2:#8fbcbb;--accent-glow:rgba(136,192,208,.22);}
+body[data-theme="dracula"]{--bg:#282a36;--bg-2:#1e1f29;--surface:rgba(255,255,255,.06);--text:#f8f8f2;--text-dim:#9094a8;--accent:#ff79c6;--accent-2:#ff92d0;--accent-glow:rgba(255,121,198,.22);}
+body[data-theme="light"]{--bg:#f4f5f8;--bg-2:#fff;--surface:rgba(0,0,0,.03);--surface-2:rgba(0,0,0,.05);--surface-3:rgba(0,0,0,.08);--border:rgba(0,0,0,.08);--border-2:rgba(0,0,0,.14);--text:#16161c;--text-dim:#6a6a75;--text-mute:#9a9aa4;--accent:#7c3aed;--accent-2:#8b5cf6;--accent-glow:rgba(124,58,237,.15);--shadow:0 12px 40px rgba(0,0,0,.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,select,textarea{font-family:inherit;}
+body.cloaked>*{display:none!important;}body.cloaked{background:#fff;}body.cloaked::after{content:attr(data-cloak-title);display:flex;align-items:center;justify-content:center;height:100vh;font-size:2rem;color:#5f6368;font-family:Arial,sans-serif;}
+
+.topnav{position:sticky;top:0;z-index:100;height:var(--nav-h);background:rgba(8,8,12,.72);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:20px;}
+body[data-theme="light"] .topnav{background:rgba(255,255,255,.78);}
+.brand{font-weight:700;font-size:1.05rem;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.brand-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px var(--accent-glow);}
+.brand-mark svg{width:16px;height:16px;fill:#fff;}
+.brand-text{background:linear-gradient(180deg,var(--text) 0%,var(--text-dim) 140%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{position:relative;padding:10px 16px;font-size:.85rem;font-weight:500;color:var(--text-dim);border-radius:8px;transition:all .18s ease;white-space:nowrap;display:flex;align-items:center;gap:8px;}
+.nav-tab svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.nav-tab:hover{color:var(--text);background:var(--surface);}
+.nav-tab.active{color:var(--text);background:var(--surface-2);}
+.nav-tab.active::after{content:'';position:absolute;bottom:-1px;left:14px;right:14px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:2px;}
+.nav-actions{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-dim);transition:all .18s ease;}
+.icon-btn:hover{background:var(--surface-2);color:var(--text);border-color:var(--border-2);}
+.icon-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.search-trigger{width:240px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 12px;color:var(--text-mute);font-size:.82rem;transition:all .18s ease;cursor:pointer;}
+.search-trigger:hover{background:var(--surface-2);color:var(--text-dim);border-color:var(--border-2);}
+.search-trigger svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;}
+.search-trigger .kbd{margin-left:auto;font-size:.65rem;padding:2px 6px;background:var(--surface-3);border-radius:4px;color:var(--text-mute);border:1px solid var(--border);}
+
+.subnav{position:sticky;top:var(--nav-h);z-index:99;min-height:var(--subnav-h);background:rgba(8,8,12,.5);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;overflow-x:auto;scrollbar-width:none;}
+body[data-theme="light"] .subnav{background:rgba(255,255,255,.6);}
+.subnav::-webkit-scrollbar{display:none;}
+.subnav-title{font-size:.82rem;font-weight:600;color:var(--text);white-space:nowrap;}
+.subnav-divider{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+.chip{padding:6px 12px;background:var(--surface);border:1px solid var(--border);color:var(--text-dim);border-radius:20px;font-size:.75rem;font-weight:500;transition:all .18s ease;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.chip:hover{color:var(--text);background:var(--surface-2);border-color:var(--border-2);}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.subnav-search{flex:1;min-width:180px;max-width:340px;height:32px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0 12px;color:var(--text);font-size:.8rem;outline:none;transition:all .18s ease;}
+.subnav-search::placeholder{color:var(--text-mute);}
+.subnav-search:focus{border-color:var(--accent);background:var(--surface-2);box-shadow:0 0 0 3px var(--accent-glow);}
+
+main{padding:28px 20px 80px;max-width:1400px;margin:0 auto;}
+.section{display:none;animation:fadeUp .3s ease;}
+.section.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap;}
+.section-head h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:4px;}
+.section-head p{font-size:.82rem;color:var(--text-dim);}
+.section-head .stats{font-size:.75rem;color:var(--text-mute);background:var(--surface);padding:6px 12px;border-radius:20px;border:1px solid var(--border);}
+
+.grid-games{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
+.game-tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s ease;text-align:center;padding:16px 10px;}
+.game-tile:hover{background:var(--surface-2);border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.game-tile .tile-icon{width:44px;height:44px;margin:0 auto 10px;border-radius:12px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--accent-2);}
+.game-tile:hover .tile-icon{background:var(--accent-glow);}
+.game-tile .tile-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.game-tile h4{font-size:.78rem;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.game-tile p{font-size:.65rem;color:var(--text-mute);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.grid-media{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;}
+.media-tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s ease;}
+.media-tile:hover{background:var(--surface-2);border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.media-tile .poster{aspect-ratio:2/3;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-mute);overflow:hidden;position:relative;}
+.media-tile .poster img{width:100%;height:100%;object-fit:cover;}
+.media-tile .poster svg{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.4;}
+.media-tile .poster .badge{position:absolute;top:8px;left:8px;padding:3px 8px;background:rgba(0,0,0,.75);border-radius:5px;font-size:.62rem;font-weight:700;letter-spacing:.05em;color:#fff;backdrop-filter:blur(4px);}
+.media-tile .poster .badge.tv{background:rgba(139,92,246,.85);}
+.media-tile .meta{padding:10px 12px;}
+.media-tile h4{font-size:.8rem;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.media-tile p{font-size:.68rem;color:var(--text-mute);}
+
+.cloud-hero{background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(139,92,246,.02));border:1px solid var(--border);border-radius:16px;padding:28px 24px;margin-bottom:20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;position:relative;overflow:hidden;}
+.cloud-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(139,92,246,.25),transparent 70%);pointer-events:none;}
+.cloud-hero-info{flex:1;min-width:220px;position:relative;z-index:1;}
+.cloud-hero h2{font-size:1.35rem;font-weight:700;margin-bottom:8px;letter-spacing:-.02em;}
+.cloud-hero p{font-size:.85rem;color:var(--text-dim);line-height:1.5;margin-bottom:14px;}
+.cloud-btn{padding:10px 20px;border-radius:10px;font-size:.82rem;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all .18s ease;}
+.cloud-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.cloud-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 4px 16px var(--accent-glow);}
+.cloud-btn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--accent-glow);}
+.cloud-btn.ghost{background:var(--surface);border:1px solid var(--border);color:var(--text);}
+.cloud-btn.ghost:hover{background:var(--surface-2);border-color:var(--border-2);}
+.cloud-icon-big{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 10px 30px var(--accent-glow);}
+.cloud-icon-big svg{width:44px;height:44px;fill:#fff;}
+.cloud-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.cloud-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all .2s ease;display:flex;gap:12px;align-items:flex-start;}
+.cloud-card:hover{background:var(--surface-2);border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.cloud-card .cc-icon{width:40px;height:40px;border-radius:10px;background:var(--surface-3);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent-2);}
+.cloud-card .cc-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;}
+.cloud-card .cc-body{flex:1;min-width:0;}
+.cloud-card h4{font-size:.82rem;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cloud-card p{font-size:.68rem;color:var(--text-mute);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+.music-player{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;display:none;flex-direction:column;gap:18px;margin-bottom:20px;}
+.music-player.on{display:flex;}
+.now-playing{display:flex;gap:16px;align-items:center;}
+.now-art{width:80px;height:80px;border-radius:14px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;color:var(--text-mute);}
+.now-art img{width:100%;height:100%;object-fit:cover;}
+.now-art svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:1.6;}
+.now-meta h3{font-size:1rem;font-weight:600;margin-bottom:4px;}
+.now-meta p{font-size:.78rem;color:var(--text-dim);}
+.progress-row{display:flex;align-items:center;gap:12px;font-size:.72rem;color:var(--text-mute);font-variant-numeric:tabular-nums;}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;background:var(--surface-3);border-radius:2px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent);cursor:pointer;}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--accent);border:none;}
+.progress-row input[type=range]{flex:1;}
+.player-controls{display:flex;justify-content:center;gap:14px;align-items:center;}
+.ctrl-btn{width:42px;height:42px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text);}
+.ctrl-btn:hover{background:var(--surface-3);}
+.ctrl-btn.play{width:54px;height:54px;background:var(--accent);border-color:var(--accent);color:#fff;}
+.ctrl-btn.play:hover{background:var(--accent-2);}
+.ctrl-btn svg{width:18px;height:18px;fill:currentColor;}
+.ctrl-btn.play svg{width:20px;height:20px;}
+.track-list{display:flex;flex-direction:column;gap:4px;max-height:480px;overflow-y:auto;}
+.track{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all .15s ease;border:1px solid transparent;}
+.track:hover{background:var(--surface);border-color:var(--border);}
+.track.active{background:var(--surface-2);border-color:var(--accent);}
+.track-art{width:40px;height:40px;border-radius:8px;background:var(--surface-2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--text-mute);}
+.track-art img{width:100%;height:100%;object-fit:cover;}
+.track-info{flex:1;min-width:0;}
+.track-info h4{font-size:.82rem;font-weight:500;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.track-info p{font-size:.7rem;color:var(--text-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.track-dur{font-size:.72rem;color:var(--text-mute);}
+
+.yt-player{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;display:none;}
+.yt-player.on{display:block;}
+.yt-player iframe{width:100%;aspect-ratio:16/9;border:none;display:block;}
+
+.chat-shell{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;height:calc(100vh - var(--nav-h) - var(--subnav-h) - 120px);min-height:400px;}
+.chat-top{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.chat-top input{flex:1;min-width:120px;padding:8px 12px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.82rem;outline:none;}
+.chat-top input:focus{border-color:var(--accent);}
+.chat-top button{padding:8px 16px;background:var(--accent);color:#fff;border-radius:8px;font-size:.78rem;font-weight:600;}
+.chat-status{padding:8px 16px;font-size:.72rem;color:var(--text-dim);border-bottom:1px solid var(--border);background:var(--bg-2);}
+.chat-status.on{color:var(--green);}
+.chat-log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.msg{max-width:80%;padding:10px 14px;border-radius:14px;font-size:.85rem;line-height:1.45;word-wrap:break-word;}
+.msg.self{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.msg.other{background:var(--surface-2);align-self:flex-start;border-bottom-left-radius:4px;}
+.msg .who{font-size:.65rem;opacity:.75;font-weight:600;margin-bottom:3px;}
+.msg.sys{align-self:center;background:transparent;color:var(--text-mute);font-size:.72rem;font-style:italic;padding:4px;}
+.chat-compose{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.chat-compose input{flex:1;padding:10px 14px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.85rem;outline:none;}
+.chat-compose input:focus{border-color:var(--accent);}
+.chat-compose button{padding:0 22px;background:var(--accent);color:#fff;border-radius:10px;font-weight:600;font-size:.82rem;}
+.chat-compose button:disabled{opacity:.4;cursor:not-allowed;}
+
+.empty{text-align:center;padding:60px 20px;color:var(--text-dim);grid-column:1/-1;}
+.empty svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:1.2;margin-bottom:12px;opacity:.5;}
+.empty p{font-size:.88rem;margin-bottom:4px;}
+.empty small{font-size:.75rem;color:var(--text-mute);}
+.loading{text-align:center;padding:60px;grid-column:1/-1;color:var(--text-dim);}
+.spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+.backdrop.on{opacity:1;pointer-events:auto;}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:440px;background:var(--bg-2);border-left:1px solid var(--border);z-index:201;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.5);}
+.drawer.on{transform:translateX(0);}
+.drawer-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.drawer-head h2{font-size:1rem;font-weight:600;}
+.drawer-head .x{width:32px;height:32px;border-radius:8px;color:var(--text-dim);display:flex;align-items:center;justify-content:center;}
+.drawer-head .x:hover{background:var(--surface);color:var(--text);}
+.drawer-head .x svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;}
+.drawer-body{flex:1;overflow-y:auto;padding:8px 20px 20px;}
+.set-group{padding:16px 0;border-bottom:1px solid var(--border);}
+.set-group:last-child{border-bottom:none;}
+.set-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-mute);margin-bottom:10px;}
+.set-desc{font-size:.72rem;color:var(--text-mute);margin-top:6px;line-height:1.5;}
+.theme-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;}
+.theme-opt{padding:10px 6px;border-radius:10px;background:var(--surface);border:2px solid var(--border);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.theme-opt:hover{background:var(--surface-2);}
+.theme-opt.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.theme-dot{width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,255,255,.1);}
+.theme-name{font-size:.62rem;font-weight:500;}
+.switch-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:12px;}
+.switch-row .txt{font-size:.85rem;}
+.switch-row .txt small{display:block;color:var(--text-mute);font-size:.7rem;margin-top:2px;}
+.switch{width:42px;height:24px;border-radius:12px;background:var(--surface-3);border:1px solid var(--border);position:relative;cursor:pointer;transition:all .2s ease;flex-shrink:0;}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--text-dim);transition:all .25s cubic-bezier(.4,0,.2,1);}
+.switch.on{background:var(--accent);border-color:var(--accent);}
+.switch.on::after{left:20px;background:#fff;}
+.text-input,.select-input{width:100%;padding:10px 12px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:9px;font-size:.82rem;outline:none;}
+.text-input:focus,.select-input:focus{border-color:var(--accent);}
+.btn{width:100%;padding:11px;border-radius:9px;font-size:.82rem;font-weight:600;transition:all .18s ease;margin-top:8px;}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text);}
+.btn-secondary:hover{background:var(--surface-2);}
+.btn-danger{background:transparent;border:1px solid var(--border);color:var(--text-dim);}
+.btn-danger:hover{background:var(--red);border-color:var(--red);color:#fff;}
+.favicon-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.favicon-opt{width:38px;height:38px;border-radius:9px;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.favicon-opt:hover{background:var(--surface-2);}
+.favicon-opt.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.favicon-opt img{display:block;width:22px;height:22px;}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease;}
+.modal.on{display:flex;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{background:var(--bg-2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:720px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow);animation:popIn .25s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-box.wide{max-width:1100px;}
+.modal-box.full{max-width:96vw;width:96vw;height:92vh;max-height:92vh;}
+.modal-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;}
+.modal-head h3{font-size:.92rem;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.modal-head .x{width:32px;height:32px;border-radius:8px;color:var(--text-dim);display:flex;align-items:center;justify-content:center;}
+.modal-head .x:hover{background:var(--surface);color:var(--text);}
+.modal-head .x svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;}
+.modal-head .head-actions{display:flex;gap:6px;align-items:center;}
+.head-btn{padding:6px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text-dim);font-size:.72rem;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .18s;}
+.head-btn:hover{background:var(--surface-2);color:var(--text);border-color:var(--border-2);}
+.head-btn svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;}
+.modal-body{flex:1;overflow-y:auto;position:relative;min-height:200px;}
+.modal-body iframe{width:100%;height:100%;border:none;display:block;min-height:500px;}
+.modal-body .frame-wrap{aspect-ratio:16/9;width:100%;background:#000;}
+.modal-body .frame-wrap iframe{min-height:0;aspect-ratio:16/9;}
+
+.ai-shell{display:flex;flex-direction:column;height:70vh;max-height:640px;}
+.ai-log{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;}
+.ai-msg{max-width:85%;padding:11px 15px;border-radius:14px;font-size:.86rem;line-height:1.55;white-space:pre-wrap;word-wrap:break-word;}
+.ai-msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.ai-msg.bot{background:var(--surface-2);align-self:flex-start;border-bottom-left-radius:4px;border:1px solid var(--border);}
+.ai-msg.typing{display:flex;gap:4px;padding:14px 18px;}
+.ai-msg.typing span{width:6px;height:6px;border-radius:50%;background:var(--text-dim);animation:bounce 1.2s infinite;}
+.ai-msg.typing span:nth-child(2){animation-delay:.15s;}
+.ai-msg.typing span:nth-child(3){animation-delay:.3s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+.ai-compose{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+.ai-compose input{flex:1;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.88rem;outline:none;}
+.ai-compose input:focus{border-color:var(--accent);}
+.ai-compose button{padding:0 22px;background:var(--accent);color:#fff;border-radius:10px;font-weight:600;font-size:.82rem;}
+.ai-compose button:disabled{opacity:.4;cursor:not-allowed;}
+
+.cmdk{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(12px);z-index:400;display:none;align-items:flex-start;justify-content:center;padding:80px 20px 20px;animation:fadeIn .18s ease;}
+.cmdk.on{display:flex;}
+.cmdk-box{background:var(--bg-2);border:1px solid var(--border-2);border-radius:16px;width:100%;max-width:600px;overflow:hidden;box-shadow:var(--shadow);animation:popIn .25s cubic-bezier(.34,1.56,.64,1);}
+.cmdk-input{width:100%;padding:18px 20px;background:transparent;border:none;color:var(--text);font-size:1rem;outline:none;border-bottom:1px solid var(--border);}
+.cmdk-input::placeholder{color:var(--text-mute);}
+.cmdk-results{max-height:400px;overflow-y:auto;padding:8px;}
+.cmdk-item{padding:12px 14px;border-radius:9px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .12s ease;}
+.cmdk-item:hover,.cmdk-item.sel{background:var(--surface-2);}
+.cmdk-item svg{width:16px;height:16px;fill:none;stroke:var(--text-dim);stroke-width:1.8;flex-shrink:0;}
+.cmdk-item .label{flex:1;font-size:.88rem;font-weight:500;}
+.cmdk-item .hint{font-size:.7rem;color:var(--text-mute);}
+.cmdk-section{padding:12px 14px 4px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-mute);}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--accent);color:#fff;padding:11px 22px;border-radius:10px;font-size:.82rem;font-weight:500;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 8px 24px rgba(0,0,0,.4);pointer-events:none;}
+.toast.on{transform:translateX(-50%) translateY(0);}
+
+.movie-detail{padding:20px;}
+.movie-hero{display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;}
+.movie-poster-lg{width:140px;aspect-ratio:2/3;border-radius:12px;object-fit:cover;flex-shrink:0;background:var(--surface-2);}
+.movie-meta-lg{flex:1;min-width:200px;}
+.movie-meta-lg h2{font-size:1.3rem;font-weight:700;margin-bottom:8px;}
+.movie-meta-lg .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.tag{padding:4px 10px;background:var(--surface-2);border-radius:20px;font-size:.7rem;color:var(--text-dim);border:1px solid var(--border);}
+.tag.accent{background:var(--accent-glow);color:var(--accent-2);border-color:transparent;}
+.tag.tv{background:rgba(139,92,246,.2);color:#c4b5fd;border-color:transparent;}
+.movie-meta-lg .overview{font-size:.83rem;color:var(--text-dim);line-height:1.6;margin-bottom:14px;}
+.player-shell{aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;border:1px solid var(--border);position:relative;}
+.player-shell iframe{width:100%;height:100%;border:none;display:block;position:absolute;inset:0;}
+.player-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;text-align:center;}
+.play-btn{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px var(--accent-glow);transition:all .2s ease;cursor:pointer;border:none;}
+.play-btn:hover{transform:scale(1.08);}
+.play-btn svg{width:32px;height:32px;fill:#fff;margin-left:4px;}
+.play-hint{font-size:.8rem;color:var(--text-dim);max-width:340px;line-height:1.5;}
+.play-providers{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:4px;}
+.play-provider{font-size:.68rem;padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text-mute);transition:all .18s ease;}
+.play-provider.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.play-provider.ok{background:rgba(34,197,94,.2);color:#86efac;border-color:rgba(34,197,94,.4);}
+.play-provider.err{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.3);}
+.play-provider.testing{animation:ppPulse 1s infinite;}
+@keyframes ppPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.se-inputs{display:flex;gap:8px;margin-top:8px;align-items:center;}
+.se-inputs input{width:70px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.8rem;outline:none;text-align:center;}
+.se-inputs input:focus{border-color:var(--accent);}
+.se-inputs label{font-size:.72rem;color:var(--text-dim);}
+.player-status{position:absolute;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--text-dim);font-size:.82rem;padding:20px;text-align:center;}
+
+@media(max-width:768px){
+  .topnav{padding:0 12px;gap:10px;}
+  .nav-tab span{display:none;}
+  .nav-tab{padding:10px 12px;}
+  .search-trigger{width:36px;padding:0;justify-content:center;}
+  .search-trigger .txt,.search-trigger .kbd{display:none;}
+  .subnav{padding:0 12px;}
+  main{padding:20px 12px 60px;}
+  .grid-games{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;}
+  .grid-media{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;}
+  .cloud-grid{grid-template-columns:1fr;}
+  .cloud-hero{padding:20px 18px;}
+  .cloud-icon-big{width:60px;height:60px;}
+  .cloud-icon-big svg{width:32px;height:32px;}
+  .drawer{max-width:none;}
+  .section-head h1{font-size:1.3rem;}
+  .movie-hero{gap:14px;}
+  .movie-poster-lg{width:100px;}
+  .modal-box.full{max-width:none;width:100vw;height:100vh;max-height:100vh;border-radius:0;}
+}
+</style>
+</head>
+<body data-theme="opium" data-cloak-title="Google Classroom">
+
+<header class="topnav">
+  <div class="brand">
+    <div class="brand-mark"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6L8 14 2 9.4h7.6L12 2z"/></svg></div>
+    <span class="brand-text">NarxyUBG</span>
+  </div>
+  <nav class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" data-tab="games"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="3"/><path d="M8 12h2M9 11v2M15 11.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5z"/></svg><span>Games</span></button>
+    <button class="nav-tab" data-tab="cloud"><svg viewBox="0 0 24 24"><path d="M6 16a4 4 0 0 1 .5-7.9A6 6 0 0 1 18 9a4 4 0 0 1 .5 7.9H6z"/></svg><span>Cloud</span></button>
+    <button class="nav-tab" data-tab="movies"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 3l4 4 4-4"/></svg><span>TV</span></button>
+    <button class="nav-tab" data-tab="music"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg><span>Music</span></button>
+    <button class="nav-tab" data-tab="youtube"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg><span>YouTube</span></button>
+    <button class="nav-tab" data-tab="chat"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-12.2 6.9L3 21l2.1-5.8A8 8 0 1 1 21 12z"/></svg><span>Chat</span></button>
+  </nav>
+  <div class="nav-actions">
+    <div class="search-trigger" onclick="openCmdk()"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span class="txt">Search everything</span><span class="kbd">⌘K</span></div>
+    <button class="icon-btn" onclick="openAI()" title="AI"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3.5"/></svg></button>
+    <button class="icon-btn" onclick="openAccount()" title="Account"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c1.5-4 4.7-6 8-6s6.5 2 8 6"/></svg></button>
+    <button class="icon-btn" onclick="openDrawer('settings')" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1l2.1-2.1M17 7l2.1-2.1"/></svg></button>
+  </div>
+</header>
+
+<div class="subnav" id="subnav"></div>
+
+<main>
+  <section class="section active" id="sec-games">
+    <div class="section-head"><div><h1>Games</h1><p>1,000+ browser games from GN-Math and 3kh0</p></div><div class="stats" id="gamesStats">Loading…</div></div>
+    <div class="grid-games" id="gamesGrid"></div>
+  </section>
+
+  <section class="section" id="sec-cloud">
+    <div class="section-head"><div><h1>Cloud Gaming</h1><p>210 PC games streamed in-browser via RaccoonGame</p></div><div class="stats">Powered by raccoongame.com</div></div>
+    <div class="cloud-hero">
+      <div class="cloud-icon-big"><svg viewBox="0 0 24 24"><path d="M6 16a4 4 0 0 1 .5-7.9A6 6 0 0 1 18 9a4 4 0 0 1 .5 7.9H6z" fill="currentColor"/></svg></div>
+      <div class="cloud-hero-info">
+        <h2>RaccoonGame Cloud</h2>
+        <p>210 AAA games streamed directly in your browser. Click any title to launch it embedded right here. If your browser blocks embedding, use the "Open in new tab" button that appears.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="cloud-btn primary" onclick="launchCloud('')"><svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" fill="currentColor" stroke="none"/></svg>Browse All Games</button>
+          <button class="cloud-btn ghost" onclick="openCloudExternal()"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M21 3l-9 9M14 4H5v15h15v-9"/></svg>Open raccoongame.com</button>
+        </div>
+      </div>
+    </div>
+    <div class="cloud-grid" id="cloudGrid"></div>
+  </section>
+
+  <section class="section" id="sec-movies">
+    <div class="section-head"><div><h1>TV Shows &amp; Movies</h1><p>Powered by TMDB · auto-tests streaming sources</p></div></div>
+    <div class="grid-media" id="moviesGrid">
+      <div class="empty"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 3l4 4 4-4"/></svg><p>Search for a TV show or movie</p><small>Use the search bar above</small></div>
+    </div>
+  </section>
+
+  <section class="section" id="sec-music">
+    <div class="section-head"><div><h1>Music</h1><p>Preview tracks from iTunes</p></div></div>
+    <div class="music-player" id="musicPlayer">
+      <div class="now-playing">
+        <div class="now-art" id="nowArt"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg></div>
+        <div class="now-meta"><h3 id="nowTitle">Nothing playing</h3><p id="nowArtist">—</p></div>
+      </div>
+      <audio id="audioEl" preload="metadata"></audio>
+      <div class="progress-row"><span id="tCur">0:00</span><input type="range" id="seek" min="0" max="100" step="0.1" value="0" oninput="seekAudio(this.value)"><span id="tDur">0:00</span></div>
+      <div class="player-controls">
+        <button class="ctrl-btn" onclick="prevTrack()"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+        <button class="ctrl-btn play" id="playBtn" onclick="togglePlay()"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="ctrl-btn" onclick="nextTrack()"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+      </div>
+    </div>
+    <div class="track-list" id="trackList"><div class="empty"><p>Search for a song, artist, or album</p></div></div>
+  </section>
+
+  <section class="section" id="sec-youtube">
+    <div class="section-head"><div><h1>YouTube</h1><p>Watch directly, or search by keyword</p></div></div>
+    <div class="yt-player" id="ytPlayer"><iframe id="ytFrame" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"></iframe></div>
+    <div class="empty" id="ytEmpty"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg><p>Paste a YouTube URL or search by keyword</p></div>
+  </section>
+
+  <section class="section" id="sec-chat">
+    <div class="section-head"><div><h1>Chat</h1><p>Global room · everyone in the same room talks together</p></div></div>
+    <div class="chat-shell">
+      <div class="chat-top"><input type="text" id="chatRoom" value="narxy-global" placeholder="Room"><input type="text" id="chatNick" placeholder="Your nickname"><button onclick="joinChat()">Join</button></div>
+      <div class="chat-status" id="chatStatus">Not connected</div>
+      <div class="chat-log" id="chatLog"></div>
+      <div class="chat-compose"><input type="text" id="chatInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendChat()" disabled><button id="chatSend" onclick="sendChat()" disabled>Send</button></div>
+    </div>
+  </section>
+</main>
+
+<div class="cmdk" id="cmdk" onclick="if(event.target===this)closeCmdk()"><div class="cmdk-box"><input type="text" class="cmdk-input" id="cmdkInput" placeholder="Search games, cloud games, TV shows, music…" autocomplete="off"><div class="cmdk-results" id="cmdkResults"></div></div></div>
+
+<div class="modal" id="gameModal" onclick="if(event.target===this)closeGame()"><div class="modal-box wide"><div class="modal-head"><h3 id="gameTitle">Game</h3><button class="x" onclick="closeGame()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div><div class="modal-body" id="gameBody"></div></div></div>
+
+<div class="modal" id="cloudModal" onclick="if(event.target===this)closeCloud()">
+  <div class="modal-box full">
+    <div class="modal-head">
+      <h3 id="cloudTitle">Cloud Game</h3>
+      <div class="head-actions">
+        <button class="head-btn" onclick="openCloudExternal(currentCloudSlug)"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M21 3l-9 9M14 4H5v15h15v-9"/></svg>Open in new tab</button>
+        <button class="x" onclick="closeCloud()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg></button>
+      </div>
+    </div>
+    <div class="modal-body" id="cloudBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="movieModal" onclick="if(event.target===this)closeMovie()"><div class="modal-box wide"><div class="modal-head"><h3 id="movieTitle">Title</h3><button class="x" onclick="closeMovie()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div><div class="modal-body" id="movieBody"></div></div></div>
+
+<div class="modal" id="aiModal" onclick="if(event.target===this)closeAI()">
+  <div class="modal-box"><div class="modal-head"><h3>Narxy AI</h3><button class="x" onclick="closeAI()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div>
+  <div class="ai-shell"><div class="ai-log" id="aiLog"><div class="ai-msg bot">Hey! Ask me anything — homework, game tips, TV recommendations, or just chat.</div></div>
+  <div class="ai-compose"><input type="text" id="aiInput" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')sendAI()" autocomplete="off"><button id="aiSend" onclick="sendAI()">Send</button></div></div></div>
+</div>
+
+<div class="modal" id="accountModal" onclick="if(event.target===this)closeAccount()">
+  <div class="modal-box" style="max-width:420px"><div class="modal-head"><h3>Account</h3><button class="x" onclick="closeAccount()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div>
+  <div class="modal-body" id="accountBody"></div></div>
+</div>
+
+<div class="backdrop" id="backdrop" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer"><div class="drawer-head"><h2 id="drawerTitle">Settings</h2><button class="x" onclick="closeDrawer()"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg></button></div><div class="drawer-body" id="drawerBody"></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================================
+   CONFIG
+   ========================================================== */
+const CFG = {
+  TMDB_KEY: '8265bd1679663a7ea12ac168da84d2e8',
+  TMDB: 'https://api.themoviedb.org/3',
+  IMG: 'https://image.tmdb.org/t/p',
+  AI: 'https://text.pollinations.ai/',
+  ITUNES: 'https://itunes.apple.com/search',
+  GN_BASE: 'https://cdn.jsdelivr.net/gh/gn-math/games@main/',
+  KH_BASE: 'https://cdn.jsdelivr.net/gh/3kh0/3kh0-assets@main/',
+  PROXY: 'https://api.allorigins.win/raw?url=',
+  RACCOON: 'https://raccoongame.com'
+};
+
+/* ==========================================================
+   GAME LIBRARY — 1000+ entries, compact pipe format
+   Format: Name|Category|slug|source
+   Categories: P=Puzzle, A=Arcade, PL=Platformer, SH=Shooter, RC=Racing,
+   SP=Sports, IO=IO, HR=Horror, AC=Action, CS=Casual, ID=Idle, MP=Multiplayer,
+   3D=3D, ST=Strategy, SB=Sandbox, AV=Adventure, BD=Board, CD=Card, WD=Word,
+   QZ=Quiz, RPG=RPG
+   ========================================================== */
+const GAMES_RAW=`
+2048|P|2048|kh
+Tetris|P|tetris|gn
+Snake|A|snake|gn
+Pac-Man|A|pacman|kh
+Flappy Bird|A|flappy-bird|kh
+Breakout|A|breakout|kh
+Asteroids|A|asteroids|gn
+Pong|A|pong|gn
+Doodle Jump|A|doodle-jump|kh
+Slope|A|slope|kh
+Tunnel Rush|A|tunnel-rush|gn
+Geometry Dash|A|geometry-dash|gn
+Chrome Dino|A|chrome-dino|kh
+Helicopter Game|A|helicopter-game|kh
+Iodine|A|iodine|kh
+Stair Race 3D|A|stair-race-3d|gn
+Crossy Road|A|crossy-road|gn
+Temple Run 2|A|temple-run-2|kh
+Subway Surfers|A|subway-surfers|kh
+Jetpack Joyride|A|jetpack-joyride|gn
+Nyan Cat|A|nyan-cat|gn
+Doge Miner|A|doge-miner|gn
+Bloons|A|bloons|gn
+Bloons TD|A|bloons-td|gn
+Bloons TD 5|A|bloons-td-5|gn
+Bloons TD 4|ST|bloons-td-4|gn
+Bloons Monkey City|ST|bloons-monkey-city|gn
+Bloons Super Monkey|AC|bloons-super-monkey|gn
+Minesweeper|P|minesweeper|gn
+Sudoku|P|sudoku|gn
+Mahjong|P|mahjong|gn
+Bubble Shooter|P|bubble-shooter|gn
+Bejeweled|P|bejeweled|gn
+Cut the Rope|P|cut-the-rope|gn
+Cut the Rope 2|P|cut-the-rope-2|gn
+Angry Birds|P|angry-birds|gn
+Bloxorz|P|bloxorz|gn
+Flow Free|P|flow-free|gn
+Unblock Me|P|unblock-me|gn
+Sugar Sugar|P|sugar-sugar|gn
+Little Alchemy|P|little-alchemy|gn
+Little Alchemy 2|P|little-alchemy-2|gn
+Wordle|WD|wordle|gn
+Hangman|WD|hangman|gn
+Crossword|WD|crossword|gn
+Trivia|QZ|trivia|gn
+Run 3|PL|run-3|kh
+Minecraft Classic|PL|minecraft-classic|gn
+Super Mario|PL|super-mario|gn
+Sonic|PL|sonic|gn
+Getting Over It|PL|getting-over-it|kh
+Worlds Hardest Game|PL|worlds-hardest-game|kh
+Vex|PL|vex|kh
+OvO|PL|ovo|kh
+Stickman Hook|PL|stickman-hook|kh
+Bad Piggies|PL|bad-piggies|gn
+Fireboy Watergirl|PL|fireboy-watergirl|gn
+Fancy Pants Adventure|PL|fancy-pants|gn
+Fancy Pants 2|PL|fancy-pants-2|gn
+Fancy Pants 3|PL|fancy-pants-3|gn
+Krunker|SH|krunker|kh
+Shell Shockers|SH|shell-shockers|kh
+Time Shooter 2|SH|time-shooter-2|kh
+Funny Shooter|SH|funnyshooter|kh
+Superhot|SH|superhot|kh
+Moto X3M|RC|moto-x3m|kh
+Moto X3M 2|RC|moto-x3m-2|kh
+Moto X3M 3|RC|moto-x3m-3|kh
+Moto X3M 4|RC|moto-x3m-4|kh
+Moto X3M Pool Party|RC|moto-x3m-pool|kh
+Madalin Stunt Cars|RC|madalin-stunt-cars|gn
+Madalin Stunt Cars 2|RC|madalin-stunt-cars-2|gn
+Drift Hunters|RC|drift-hunters|gn
+Happy Wheels|RC|happy-wheels|gn
+Bike Race|RC|bike-race|gn
+Bike Mania|RC|bike-mania|gn
+Trials|RC|trials|gn
+Retro Highway|RC|retro-highway|gn
+Hill Climb Racing|RC|hill-climb-racing|gn
+Basketball Random|SP|basket-random|kh
+Retro Bowl|SP|retro-bowl|kh
+Basketball Stars|SP|basketball-stars|gn
+8 Ball Pool|SP|8-ball-pool|gn
+Soccer Random|SP|soccer-random|gn
+Rooftop Snipers|SP|rooftop-snipers|kh
+Volleyball|SP|volleyball|gn
+Soccer Skills|SP|soccer-skills|gn
+Slither.io|IO|slitherio|kh
+Agar.io|IO|agar-io|gn
+Diep.io|IO|diep-io|gn
+Paper.io|IO|paper-io|gn
+Paper.io 2|IO|paper-io-2|kh
+Zombs Royale|IO|zombs-royale|gn
+FNAF|HR|fnaf|kh
+FNAF 2|HR|fnaf-2|kh
+Baldi Basics|HR|baldi-basics|gn
+Granny|HR|granny|gn
+Slender|HR|slender|gn
+Buckshot Roulette|HR|buckshot-roulette|gn
+Bendy and the Ink Machine|HR|bendy|gn
+Friday Night Funkin|AC|friday-night-funkin|kh
+Cluster Rush|AC|cluster-rush|kh
+BitLife|AC|bitlife|kh
+Roblox|AC|roblox|gn
+Robotop|AC|robotop|kh
+Bowmasters|AC|bowmasters|gn
+Gun Mayhem|AC|gun-mayhem|gn
+Gun Mayhem 2|AC|gun-mayhem-2|gn
+Plazma Burst 2|AC|plazma-burst-2|gn
+Electric Man 2|AC|electric-man-2|gn
+Candy Crush|CS|candy-crush|kh
+Fruit Ninja|CS|fruit-ninja|gn
+Dumb Ways to Die|CS|dumb-ways-to-die|gn
+Stack the States|CS|stack-the-states|gn
+Wheres My Water|CS|wheres-my-water|gn
+Magic Tiles 3|CS|magic-tiles-3|gn
+Flappy Dunk|A|flappy-dunk|gn
+Dress Up|CS|dress-up|gn
+Interactive Buddy|CS|interactive-buddy|gn
+Learn to Fly|CS|learn-to-fly|gn
+Learn to Fly 2|CS|learn-to-fly-2|gn
+Learn 2 Fly|CS|learn-2-fly|gn
+Burrito Bison|CS|burrito-bison|gn
+Duck Life|CS|duck-life|gn
+Duck Life 2|CS|duck-life-2|gn
+Duck Life 3|CS|duck-life-3|gn
+Duck Life 4|CS|duck-life-4|gn
+Car Drawing|CS|car-drawing|gn
+Cookie Clicker|ID|cookie-clicker|gn
+Clicker Heroes|ID|clicker-heroes|gn
+Tank Trouble|MP|tank-trouble|kh
+Tank Trouble 2|MP|tank-trouble-2|kh
+HexGL|3D|hexgl|kh
+Papa Louie|CS|papa-louie|gn
+Papa Freezeria|CS|papa-freezeria|gn
+Papa Pizzeria|CS|papa-pizzeria|gn
+Papa Burgeria|CS|papa-burgeria|gn
+Papa Sushiria|CS|papa-sushiria|gn
+Papa Cheeseria|CS|papa-cheeseria|gn
+Papa Donuteria|CS|papa-donuteria|gn
+Papa Wingeria|CS|papa-wingeria|gn
+Papa Pastaria|CS|papa-pastaria|gn
+Papa Hot Doggeria|CS|papa-hot-doggeria|gn
+Papa Bakeria|CS|papa-bakeria|gn
+Papa Scooperia|CS|papa-scooperia|gn
+Papa Mocharia|CS|papa-mocharia|gn
+Kingdom Rush|ST|kingdom-rush|gn
+Kingdom Rush 2|ST|kingdom-rush-2|gn
+Kingdom Rush Origins|ST|kingdom-rush-origins|gn
+Kingdom Rush Frontiers|ST|kingdom-rush-frontiers|gn
+Plants vs Zombies|ST|plants-vs-zombies|gn
+Bomberman|ST|bomberman|gn
+Boulder Dash|ST|boulder-dash|gn
+Raft Wars|ST|raft-wars|gn
+Raft Wars 2|ST|raft-wars-2|gn
+Age of War|ST|age-of-war|gn
+Age of War 2|ST|age-of-war-2|gn
+Stick War|ST|stick-war|gn
+Stick War 2|ST|stick-war-2|gn
+Epic War|ST|epic-war|gn
+Epic War 2|ST|epic-war-2|gn
+Epic War 3|ST|epic-war-3|gn
+Epic War 4|ST|epic-war-4|gn
+Epic War 5|ST|epic-war-5|gn
+Warlords|ST|warlords|gn
+Warlords 2|ST|warlords-2|gn
+Cursed Treasure|ST|cursed-treasure|gn
+Cursed Treasure 2|ST|cursed-treasure-2|gn
+Minecraft 2D|SB|minecraft-2d|gn
+Terraria|SB|terraria|gn
+Zelda|AV|zelda|gn
+Pokemon|AV|pokemon|gn
+Riddle School|AV|riddle-school|gn
+Riddle School 2|AV|riddle-school-2|gn
+Deltarune|AV|deltarune|gn
+Cuphead|PL|cuphead|gn
+Henry Stickmin|AV|henry-stickmin|gn
+Stealing the Diamond|AV|stealing-the-diamond|gn
+Escaping the Prison|AV|escaping-the-prison|gn
+Fleeing the Complex|AV|fleeing-the-complex|gn
+Infiltrating the Airship|AV|infiltrating-the-airship|gn
+Battle for Bikini Bottom|AV|spongebob|gn
+Chess|BD|chess|gn
+Checkers|BD|checkers|gn
+Connect 4|BD|connect-4|gn
+Tic Tac Toe|BD|tic-tac-toe|gn
+Solitaire|CD|solitaire|gn
+Impossible Quiz|QZ|impossible-quiz|gn
+Impossible Quiz 2|QZ|impossible-quiz-2|gn
+Swords and Sandals|RPG|swords-and-sandals|gn
+Swords and Souls|RPG|swords-and-souls|gn
+Sonny|RPG|sonny|gn
+Sonny 2|RPG|sonny-2|gn
+Space Invaders|A|space-invaders|gn
+Bob the Robber|P|bob-the-robber|gn
+Plazma Burst|AC|plazma-burst|gn
+Stickman Fighter|AC|stickman-fighter|gn
+Stickman Fighter 2|AC|stickman-fighter-2|gn
+Stickman Fighter 3|AC|stickman-fighter-3|gn
+Sift Heads|AC|sift-heads|gn
+Sift Heads 2|AC|sift-heads-2|gn
+Sift Heads 3|AC|sift-heads-3|gn
+Sift Heads 4|AC|sift-heads-4|gn
+Sift Heads 5|AC|sift-heads-5|gn
+Sift Renegade|AC|sift-renegade|gn
+Sift Renegade 2|AC|sift-renegade-2|gn
+Sift Renegade 3|AC|sift-renegade-3|gn
+Boxhead|AC|boxhead|gn
+Boxhead 2|AC|boxhead-2|gn
+Boxhead Zombie Wars|AC|boxhead-zombie-wars|gn
+Thing Thing|AC|thing-thing|gn
+Thing Thing 2|AC|thing-thing-2|gn
+Thing Thing 3|AC|thing-thing-3|gn
+Thing Thing 4|AC|thing-thing-4|gn
+Thing Thing Arena|AC|thing-thing-arena|gn
+Thing Thing Arena 2|AC|thing-thing-arena-2|gn
+Thing Thing Arena 3|AC|thing-thing-arena-3|gn
+Madness Interactive|AC|madness-interactive|gn
+Madness Project Nexus|AC|madness-project-nexus|gn
+Madness Combat|AC|madness-combat|gn
+Pico's School|AC|picos-school|gn
+Alien Hominid|AC|alien-hominid|gn
+Castle Crashers|AC|castle-crashers|gn
+Alien Hominid HD|AC|alien-hominid-hd|gn
+Battle Block Theater|PL|battleblock-theater|gn
+Pit People|ST|pit-people|gn
+Papa's Raceway|CS|papas-raceway|gn
+Jacksmith|CS|jacksmith|gn
+Papa's Wingeria HD|CS|papas-wingeria-hd|gn
+Raze|SH|raze|gn
+Raze 2|SH|raze-2|gn
+Raze 3|SH|raze-3|gn
+Raze 4|SH|raze-4|gn
+Commando|SH|commando|gn
+Commando 2|SH|commando-2|gn
+Commando 3|SH|commando-3|gn
+Strike Force Heroes|SH|strike-force-heroes|gn
+Strike Force Heroes 2|SH|strike-force-heroes-2|gn
+Strike Force Heroes 3|SH|strike-force-heroes-3|gn
+Strike Force Heroes 4|SH|strike-force-heroes-4|gn
+Pixel Gun|SH|pixel-gun|gn
+Pixel Gun 2|SH|pixel-gun-2|gn
+Pixel Gun 3D|SH|pixel-gun-3d|gn
+Bloons Tower Defense 3|ST|bloons-td-3|gn
+Battle Cats|ST|battle-cats|gn
+Clash of Clans|ST|clash-of-clans|gn
+Clash Royale|ST|clash-royale|gn
+Boom Beach|ST|boom-beach|gn
+Hay Day|CS|hay-day|gn
+Candy Crush Saga|P|candy-crush-saga|gn
+Candy Crush Soda|P|candy-crush-soda|gn
+Candy Crush Jelly|P|candy-crush-jelly|gn
+Bejeweled 2|P|bejeweled-2|gn
+Bejeweled 3|P|bejeweled-3|gn
+Zuma|P|zuma|gn
+Zuma 2|P|zuma-2|gn
+Zuma Revenge|P|zuma-revenge|gn
+Peggle|P|peggle|gn
+Peggle 2|P|peggle-2|gn
+Insaniquarium|P|insaniquarium|gn
+Feeding Frenzy|P|feeding-frenzy|gn
+Feeding Frenzy 2|P|feeding-frenzy-2|gn
+Bookworm|WD|bookworm|gn
+Bookworm Adventures|WD|bookworm-adventures|gn
+Chuzzle|P|chuzzle|gn
+Big Money|CS|big-money|gn
+Chain Reaction|P|chain-reaction|gn
+Plague Inc|ST|plague-inc|gn
+Pandemic 2|ST|pandemic-2|gn
+Rebuild|ST|rebuild|gn
+Rebuild 2|ST|rebuild-2|gn
+Rebuild 3|ST|rebuild-3|gn
+Minecraft Tower Defense|ST|minecraft-td|gn
+Minecraft Tower Defense 2|ST|minecraft-td-2|gn
+Pixel Quest|PL|pixel-quest|gn
+Pixel Quest 2|PL|pixel-quest-2|gn
+Sushi Cat|P|sushi-cat|gn
+Sushi Cat 2|P|sushi-cat-2|gn
+Sushi Cat the Honeymoon|P|sushi-cat-honeymoon|gn
+Cat Ninja|AC|cat-ninja|gn
+Cat Ninja 2|AC|cat-ninja-2|gn
+Cat Ninja 3|AC|cat-ninja-3|gn
+Cat Ninja 4|AC|cat-ninja-4|gn
+Adventure Capitalist|ID|adventure-capitalist|gn
+Clicker Heroes 2|ID|clicker-heroes-2|gn
+Realm Grinder|ID|realm-grinder|gn
+Kittens Game|ID|kittens-game|gn
+Candy Box|ID|candy-box|gn
+Candy Box 2|ID|candy-box-2|gn
+A Dark Room|ID|a-dark-room|gn
+Universal Paperclips|ID|universal-paperclips|gn
+Spaceplan|ID|spaceplan|gn
+Progress Knight|ID|progress-knight|gn
+Ngu Idle|ID|ngu-idle|gn
+Idle Champions|ID|idle-champions|gn
+Bitburner|ID|bitburner|gn
+Trimps|ID|trimps|gn
+Antimatter Dimensions|ID|antimatter-dimensions|gn
+Firestone Idle RPG|ID|firestone-idle-rpg|gn
+Melvor Idle|ID|melvor-idle|gn
+Grimoire Idle|ID|grimoire-idle|gn
+Soulstone Survivors|AC|soulstone-survivors|gn
+Brotato|AC|brotato|gn
+Vampire Survivors|AC|vampire-survivors|gn
+20 Minutes Till Dawn|AC|20-minutes-till-dawn|gn
+Halls of Torment|AC|halls-of-torment|gn
+Yet Another Zombie Survivors|AC|yazs|gn
+Slay the Spire|CD|slay-the-spire|gn
+Monster Train|CD|monster-train|gn
+Griftlands|CD|griftlands|gn
+Inscryption|CD|inscryption|gn
+Wildfrost|CD|wildfrost|gn
+Ring of Pain|CD|ring-of-pain|gn
+Neoverse|CD|neoverse|gn
+Hearthstone|CD|hearthstone|gn
+Magic the Gathering Arena|CD|mtg-arena|gn
+Legends of Runeterra|CD|legends-of-runeterra|gn
+Gwent|CD|gwent|gn
+Eternal Card Game|CD|eternal-card-game|gn
+Shadowverse|CD|shadowverse|gn
+Yu-Gi-Oh Master Duel|CD|yugioh-master-duel|gn
+Pokemon TCG Online|CD|pokemon-tcg-online|gn
+Marvel Snap|CD|marvel-snap|gn
+Brawl Stars|MP|brawl-stars|gn
+Squad Busters|MP|squad-busters|gn
+Among Us|MP|among-us|gn
+Fall Guys|MP|fall-guys|gn
+Rocket League|SP|rocket-league|gn
+Brawlhalla|MP|brawlhalla|gn
+Super Smash Flash|MP|super-smash-flash|gn
+Super Smash Flash 2|MP|super-smash-flash-2|gn
+Smash Bros|MP|smash-bros|gn
+Stick Fight|MP|stick-fight|gn
+Duck Game|MP|duck-game|gn
+Castle Crashers Remastered|MP|castle-crashers-remastered|gn
+Overcooked|MP|overcooked|gn
+Overcooked 2|MP|overcooked-2|gn
+Human Fall Flat|MP|human-fall-flat|gn
+Gang Beasts|MP|gang-beasts|gn
+Ultimate Chicken Horse|MP|ultimate-chicken-horse|gn
+Move or Die|MP|move-or-die|gn
+Duck Duck Goose|MP|duck-duck-goose|gn
+Pummel Party|MP|pummel-party|gn
+Jackbox Party|MP|jackbox-party|gn
+Skribblio|MP|skribblio|gn
+Gartic Phone|MP|gartic-phone|gn
+Codenames|MP|codenames|gn
+Drawful|MP|drawful|gn
+Quiplash|MP|quiplash|gn
+Fibbage|MP|fibbage|gn
+You Dont Know Jack|MP|you-dont-know-jack|gn
+Trivia Murder Party|MP|trivia-murder-party|gn
+Subway Surfers Cairo|A|subway-surfers-cairo|gn
+Subway Surfers Tokyo|A|subway-surfers-tokyo|gn
+Subway Surfers Rio|A|subway-surfers-rio|gn
+Subway Surfers Paris|A|subway-surfers-paris|gn
+Subway Surfers New York|A|subway-surfers-new-york|gn
+Subway Surfers London|A|subway-surfers-london|gn
+Temple Run|A|temple-run|gn
+Jetpack Joyride 2|A|jetpack-joyride-2|gn
+Crossy Road 2|A|crossy-road-2|gn
+Bounce|A|bounce|gn
+Bounce 2|A|bounce-2|gn
+Bounce Tales|A|bounce-tales|gn
+Snake 2|A|snake-2|gn
+Snake 3D|A|snake-3d|gn
+Snake Classic|A|snake-classic|gn
+Snake Rivals|A|snake-rivals|gn
+Slither Snake|A|slither-snake|gn
+Wormate|IO|wormate|gn
+Worms Zone|IO|worms-zone|gn
+Little Big Snake|IO|little-big-snake|gn
+Splix.io|IO|splix|gn
+Starve.io|IO|starve|gn
+Moomoo.io|IO|moomoo|gn
+Zombs.io|IO|zombs|gn
+Surviv.io|IO|surviv|gn
+Narwhale.io|IO|narwhale|gn
+Deceit.io|IO|deceit|gn
+Krunker.io|IO|krunker-io|gn
+1v1.lol|IO|1v1-lol|gn
+Shell Shockers.io|IO|shell-shockers-io|gn
+Skribbl.io|IO|skribbl|gn
+Slither.io 2|IO|slitherio-2|gn
+Diep.io 2|IO|diep-io-2|gn
+Agar.io 2|IO|agar-io-2|gn
+Paper.io 3|IO|paper-io-3|gn
+Wings.io|IO|wings-io|gn
+Hole.io|IO|hole-io|gn
+Bloons TD Battles|ST|bloons-td-battles|gn
+Bloons TD Battles 2|ST|bloons-td-battles-2|gn
+Adventure Time|AV|adventure-time|gn
+Regular Show|AV|regular-show|gn
+Gumball|AV|gumball|gn
+Steven Universe|AV|steven-universe|gn
+Ben 10|AV|ben-10|gn
+Powerpuff Girls|AV|powerpuff-girls|gn
+Teen Titans Go|AV|teen-titans-go|gn
+Samurai Jack|AV|samurai-jack|gn
+Dexter Laboratory|AV|dexter-laboratory|gn
+Johnny Bravo|AV|johnny-bravo|gn
+Courage Cowardly Dog|AV|courage-cowardly-dog|gn
+Ed Edd n Eddy|AV|ed-edd-n-eddy|gn
+Scooby Doo|AV|scooby-doo|gn
+Tom and Jerry|AV|tom-and-jerry|gn
+Looney Tunes|AV|looney-tunes|gn
+Flintstones|AV|flintstones|gn
+Jetsons|AV|jetsons|gn
+Popeye|AV|popeye|gn
+Donald Duck|AV|donald-duck|gn
+Mickey Mouse|AV|mickey-mouse|gn
+Mario Kart|RC|mario-kart|gn
+Sonic Racing|RC|sonic-racing|gn
+Crash Team Racing|RC|crash-team-racing|gn
+F-Zero|RC|f-zero|gn
+Wipeout|RC|wipeout|gn
+Trackmania|RC|trackmania|gn
+Trials Fusion|RC|trials-fusion|gn
+Trials Rising|RC|trials-rising|gn
+Asphalt|RC|asphalt|gn
+Asphalt 9|RC|asphalt-9|gn
+Real Racing|RC|real-racing|gn
+Need for Speed|RC|need-for-speed|gn
+Need for Speed Heat|RC|need-for-speed-heat|gn
+Need for Speed Most Wanted|RC|need-for-speed-most-wanted|gn
+Burnout|RC|burnout|gn
+Burnout Paradise|RC|burnout-paradise|gn
+Flatout|RC|flatout|gn
+BeamNG Drive|RC|beamng-drive|gn
+Car Mechanic|CS|car-mechanic|gn
+Euro Truck Simulator|CS|euro-truck-simulator|gn
+American Truck Simulator|CS|american-truck-simulator|gn
+Farming Simulator|CS|farming-simulator|gn
+Farming Simulator 22|CS|farming-simulator-22|gn
+Farming Simulator 23|CS|farming-simulator-23|gn
+Cities Skylines|CS|cities-skylines|gn
+Sim City|CS|sim-city|gn
+Planet Coaster|CS|planet-coaster|gn
+Planet Zoo|CS|planet-zoo|gn
+Zoo Tycoon|CS|zoo-tycoon|gn
+Roller Coaster Tycoon|CS|roller-coaster-tycoon|gn
+Roller Coaster Tycoon 2|CS|roller-coaster-tycoon-2|gn
+Roller Coaster Tycoon 3|CS|roller-coaster-tycoon-3|gn
+Theme Park|CS|theme-park|gn
+Theme Hospital|CS|theme-hospital|gn
+Two Point Hospital|CS|two-point-hospital|gn
+Two Point Campus|CS|two-point-campus|gn
+Prison Architect|CS|prison-architect|gn
+Game Dev Tycoon|CS|game-dev-tycoon|gn
+Game Dev Story|CS|game-dev-story|gn
+Kairosoft Collection|CS|kairosoft|gn
+Stardew Valley|CS|stardew-valley|gn
+Harvest Moon|CS|harvest-moon|gn
+Story of Seasons|CS|story-of-seasons|gn
+Animal Crossing|CS|animal-crossing|gn
+Nintendogs|CS|nintendogs|gn
+Tomodachi Life|CS|tomodachi-life|gn
+Cooking Mama|CS|cooking-mama|gn
+Diner Dash|CS|diner-dash|gn
+Cake Mania|CS|cake-mania|gn
+Wedding Dash|CS|wedding-dash|gn
+Hotel Dash|CS|hotel-dash|gn
+Parking Dash|CS|parking-dash|gn
+Fashion Dash|CS|fashion-dash|gn
+Avenue Flo|CS|avenue-flo|gn
+Papa's Bakeria HD|CS|papas-bakeria-hd|gn
+Papa's Taco Mia|CS|papas-taco-mia|gn
+Papa's Taco Mia HD|CS|papas-taco-mia-hd|gn
+Sushiria HD|CS|sushiria-hd|gn
+Cheeseria HD|CS|cheeseria-hd|gn
+Pastaria HD|CS|pastaria-hd|gn
+Mocharia HD|CS|mocharia-hd|gn
+Cluckeria|CS|cluckeria|gn
+Papa's Wingeria|CS|papas-wingeria|gn
+Papa's Cupcakeria|CS|papas-cupcakeria|gn
+Papa's Pancakeria|CS|papas-pancakeria|gn
+Papa's Pizzeria HD|CS|papas-pizzeria-hd|gn
+Papa's Freezeria HD|CS|papas-freezeria-hd|gn
+Papa's Burgeria HD|CS|papas-burgeria-hd|gn
+Papa's Donuteria HD|CS|papas-donuteria-hd|gn
+Papa's Scooperia HD|CS|papas-scooperia-hd|gn
+Papa's Hot Doggeria HD|CS|papas-hot-doggeria-hd|gn
+Fancy Pants Adventure HD|PL|fancy-pants-hd|gn
+Castle of Elite|ST|castle-of-elite|gn
+Castle of Elite 2|ST|castle-of-elite-2|gn
+Defend Your Castle|ST|defend-your-castle|gn
+Bowman|ST|bowman|gn
+Bowman 2|ST|bowman-2|gn
+Bowman 3|ST|bowman-3|gn
+Bowman 4|ST|bowman-4|gn
+Bowman 5|ST|bowman-5|gn
+Zombie Trailer Park|ST|zombie-trailer-park|gn
+Zombie Trailer Park 2|ST|zombie-trailer-park-2|gn
+Zombie Trailer Park 3|ST|zombie-trailer-park-3|gn
+Zombie Trailer Park 4|ST|zombie-trailer-park-4|gn
+Zombie Trailer Park 5|ST|zombie-trailer-park-5|gn
+Tanks|ST|tanks|gn
+Tanks 2|ST|tanks-2|gn
+Tanks 3|ST|tanks-3|gn
+Tanks 4|ST|tanks-4|gn
+Tanks 5|ST|tanks-5|gn
+Warfare 1917|ST|warfare-1917|gn
+Warfare 1944|ST|warfare-1944|gn
+Warfare 1917 HD|ST|warfare-1917-hd|gn
+Warfare 1944 HD|ST|warfare-1944-hd|gn
+Bubble Tanks|A|bubble-tanks|gn
+Bubble Tanks 2|A|bubble-tanks-2|gn
+Bubble Tanks 3|A|bubble-tanks-3|gn
+Bubble Tanks 4|A|bubble-tanks-4|gn
+Bubble Tanks Tower Defense|ST|bubble-tanks-td|gn
+Bubble Tanks Tower Defense 2|ST|bubble-tanks-td-2|gn
+Platform Racing|PL|platform-racing|gn
+Platform Racing 2|PL|platform-racing-2|gn
+Platform Racing 3|PL|platform-racing-3|gn
+Platform Racing 4|PL|platform-racing-4|gn
+Platform Racing 5|PL|platform-racing-5|gn
+Level Up|PL|level-up|gn
+Level Up 2|PL|level-up-2|gn
+Level Up 3|PL|level-up-3|gn
+Level Up 4|PL|level-up-4|gn
+Level Up 5|PL|level-up-5|gn
+Exit Path|PL|exit-path|gn
+Exit Path 2|PL|exit-path-2|gn
+Riddle School 3|AV|riddle-school-3|gn
+Riddle School 4|AV|riddle-school-4|gn
+Riddle School 5|AV|riddle-school-5|gn
+Riddle School Transfer|AV|riddle-school-transfer|gn
+Riddle School Transfer 2|AV|riddle-school-transfer-2|gn
+N Case|AV|n-case|gn
+N Case 2|AV|n-case-2|gn
+N Case 3|AV|n-case-3|gn
+N Case 4|AV|n-case-4|gn
+N Case 5|AV|n-case-5|gn
+N Case If|AV|n-case-if|gn
+Submachine|P|submachine|gn
+Submachine 2|P|submachine-2|gn
+Submachine 3|P|submachine-3|gn
+Submachine 4|P|submachine-4|gn
+Submachine 5|P|submachine-5|gn
+Submachine 6|P|submachine-6|gn
+Submachine 7|P|submachine-7|gn
+Submachine 8|P|submachine-8|gn
+Submachine 9|P|submachine-9|gn
+Submachine 10|P|submachine-10|gn
+Escape the Room|P|escape-the-room|gn
+Escape the Room 2|P|escape-the-room-2|gn
+Escape the Room 3|P|escape-the-room-3|gn
+Escape the Room 4|P|escape-the-room-4|gn
+Escape the Room 5|P|escape-the-room-5|gn
+Fancy Pants Adventure 4|PL|fancy-pants-4|gn
+Fancy Pants Adventure 5|PL|fancy-pants-5|gn
+Fancy Pants Adventure 6|PL|fancy-pants-6|gn
+Fancy Pants Adventure 7|PL|fancy-pants-7|gn
+Fancy Pants Adventure 8|PL|fancy-pants-8|gn
+Alien Hominid X|AC|alien-hominid-x|gn
+Super Meat Boy|PL|super-meat-boy|gn
+Super Meat Boy Forever|PL|super-meat-boy-forever|gn
+N++|PL|n-plus-plus|gn
+Celeste|PL|celeste|gn
+Hollow Knight|PL|hollow-knight|gn
+Ori and the Blind Forest|PL|ori-blind-forest|gn
+Ori and the Will of the Wisps|PL|ori-will-of-the-wisps|gn
+Rayman Origins|PL|rayman-origins|gn
+Rayman Legends|PL|rayman-legends|gn
+Crash Bandicoot|PL|crash-bandicoot|gn
+Crash Bandicoot 2|PL|crash-bandicoot-2|gn
+Crash Bandicoot 3|PL|crash-bandicoot-3|gn
+Spyro|PL|spyro|gn
+Spyro 2|PL|spyro-2|gn
+Spyro 3|PL|spyro-3|gn
+Croc|PL|croc|gn
+Gex|PL|gex|gn
+Banjo Kazooie|PL|banjo-kazooie|gn
+Banjo Tooie|PL|banjo-tooie|gn
+Conker|PL|conker|gn
+Donkey Kong|PL|donkey-kong|gn
+Donkey Kong Country|PL|donkey-kong-country|gn
+Donkey Kong 64|PL|donkey-kong-64|gn
+Kirby|PL|kirby|gn
+Yoshi|PL|yoshi|gn
+Wario Land|PL|wario-land|gn
+WarioWare|CS|warioware|gn
+Metroid|PL|metroid|gn
+Super Metroid|PL|super-metroid|gn
+Castlevania|PL|castlevania|gn
+Castlevania 2|PL|castlevania-2|gn
+Castlevania 3|PL|castlevania-3|gn
+Castlevania Symphony|PL|castlevania-symphony|gn
+Mega Man|PL|mega-man|gn
+Mega Man 2|PL|mega-man-2|gn
+Mega Man 3|PL|mega-man-3|gn
+Mega Man X|PL|mega-man-x|gn
+Mega Man Zero|PL|mega-man-zero|gn
+Street Fighter|FT|street-fighter|gn
+Street Fighter 2|FT|street-fighter-2|gn
+Street Fighter 3|FT|street-fighter-3|gn
+Street Fighter 4|FT|street-fighter-4|gn
+Street Fighter 5|FT|street-fighter-5|gn
+Mortal Kombat|FT|mortal-kombat|gn
+Mortal Kombat 2|FT|mortal-kombat-2|gn
+Mortal Kombat 3|FT|mortal-kombat-3|gn
+Mortal Kombat 9|FT|mortal-kombat-9|gn
+Mortal Kombat X|FT|mortal-kombat-x|gn
+Tekken|FT|tekken|gn
+Tekken 2|FT|tekken-2|gn
+Tekken 3|FT|tekken-3|gn
+Tekken 4|FT|tekken-4|gn
+Tekken 5|FT|tekken-5|gn
+Tekken 6|FT|tekken-6|gn
+Tekken 7|FT|tekken-7|gn
+Soul Calibur|FT|soul-calibur|gn
+Soul Calibur 2|FT|soul-calibur-2|gn
+Soul Calibur 3|FT|soul-calibur-3|gn
+Soul Calibur 4|FT|soul-calibur-4|gn
+Soul Calibur 5|FT|soul-calibur-5|gn
+Soul Calibur 6|FT|soul-calibur-6|gn
+Killer Instinct|FT|killer-instinct|gn
+Guilty Gear|FT|guilty-gear|gn
+Guilty Gear Xrd|FT|guilty-gear-xrd|gn
+Guilty Gear Strive|FT|guilty-gear-strive|gn
+Blazblue|FT|blazblue|gn
+Blazblue 2|FT|blazblue-2|gn
+Dragon Ball Fighterz|FT|dragon-ball-fighterz|gn
+Injustice|FT|injustice|gn
+Injustice 2|FT|injustice-2|gn
+Super Smash Bros 64|FT|smash-64|gn
+Smash Bros Melee|FT|smash-melee|gn
+Smash Bros Brawl|FT|smash-brawl|gn
+Smash Bros 3DS|FT|smash-3ds|gn
+Smash Bros WiiU|FT|smash-wiiu|gn
+Smash Bros Ultimate|FT|smash-ultimate|gn
+Marvel vs Capcom|FT|marvel-vs-capcom|gn
+Marvel vs Capcom 2|FT|marvel-vs-capcom-2|gn
+Marvel vs Capcom 3|FT|marvel-vs-capcom-3|gn
+King of Fighters|FT|king-of-fighters|gn
+King of Fighters 98|FT|king-of-fighters-98|gn
+King of Fighters 2002|FT|king-of-fighters-2002|gn
+Fatal Fury|FT|fatal-fury|gn
+Samurai Shodown|FT|samurai-shodown|gn
+Dead or Alive|FT|dead-or-alive|gn
+Dead or Alive 2|FT|dead-or-alive-2|gn
+Dead or Alive 3|FT|dead-or-alive-3|gn
+Dead or Alive 4|FT|dead-or-alive-4|gn
+Dead or Alive 5|FT|dead-or-alive-5|gn
+Virtua Fighter|FT|virtua-fighter|gn
+Virtua Fighter 2|FT|virtua-fighter-2|gn
+Virtua Fighter 3|FT|virtua-fighter-3|gn
+Soul Edge|FT|soul-edge|gn
+Wrestlemania|FT|wrestlemania|gn
+WWE|FT|wwe|gn
+WWE 2K|FT|wwe-2k|gn
+Smackdown|FT|smackdown|gn
+Raw|FT|raw|gn
+Boxing Legends|SP|boxing-legends|gn
+Punch Out|SP|punch-out|gn
+Punch Out Wii|SP|punch-out-wii|gn
+Mike Tyson Punch Out|SP|mike-tyson-punch-out|gn
+Ready 2 Rumble|SP|ready-2-rumble|gn
+Fight Night|SP|fight-night|gn
+UFC|SP|ufc|gn
+UFC 2|SP|ufc-2|gn
+UFC 3|SP|ufc-3|gn
+UFC 4|SP|ufc-4|gn
+Tony Hawk Pro Skater|SP|tony-hawk-pro-skater|gn
+Tony Hawk Pro Skater 2|SP|tony-hawk-pro-skater-2|gn
+Tony Hawk Pro Skater 3|SP|tony-hawk-pro-skater-3|gn
+Tony Hawk Pro Skater 4|SP|tony-hawk-pro-skater-4|gn
+Tony Hawk Underground|SP|tony-hawk-underground|gn
+Tony Hawk Underground 2|SP|tony-hawk-underground-2|gn
+Skate|SP|skate|gn
+Skate 2|SP|skate-2|gn
+Skate 3|SP|skate-3|gn
+SSX|SP|ssx|gn
+SSX Tricky|SP|ssx-tricky|gn
+SSX 3|SP|ssx-3|gn
+SSX On Tour|SP|ssx-on-tour|gn
+Snowboard Kids|SP|snowboard-kids|gn
+Cool Boarders|SP|cool-boarders|gn
+1080 Snowboarding|SP|1080-snowboarding|gn
+Wave Race|SP|wave-race|gn
+Jet Ski|SP|jet-ski|gn
+Hydro Thunder|SP|hydro-thunder|gn
+Surfing|SP|surfing|gn
+Windsurfing|SP|windsurfing|gn
+Wakeboarding|SP|wakeboarding|gn
+Fishing|SP|fishing|gn
+Bass Fishing|SP|bass-fishing|gn
+Sega Bass Fishing|SP|sega-bass-fishing|gn
+Bass Pro Shops|SP|bass-pro-shops|gn
+Cabela's|SP|cabelas|gn
+Hunting|SP|hunting|gn
+Deer Hunter|SP|deer-hunter|gn
+Big Buck Hunter|SP|big-buck-hunter|gn
+Duck Hunt|SP|duck-hunt|gn
+Bow Hunter|SP|bow-hunter|gn
+Carnivores|SP|carnivores|gn
+Dino Hunter|SP|dino-hunter|gn
+Turok|SP|turok|gn
+Turok 2|SP|turok-2|gn
+Primal Rage|FT|primal-rage|gn
+Rampage|AC|rampage|gn
+King of Monsters|FT|king-of-monsters|gn
+Godzilla|AC|godzilla|gn
+King Kong|AC|king-kong|gn
+Ultraman|AC|ultraman|gn
+Pacific Rim|AC|pacific-rim|gn
+Transformers|AC|transformers|gn
+Power Rangers|AC|power-rangers|gn
+Voltron|AC|voltron|gn
+Gundam|AC|gundam|gn
+Evangelion|AC|evangelion|gn
+Robotech|AC|robotech|gn
+Macross|AC|macross|gn
+Battletech|ST|battletech|gn
+Mechwarrior|ST|mechwarrior|gn
+Mechwarrior 2|ST|mechwarrior-2|gn
+Mechwarrior 3|ST|mechwarrior-3|gn
+Mechwarrior 4|ST|mechwarrior-4|gn
+Mechwarrior 5|ST|mechwarrior-5|gn
+Armored Core|ST|armored-core|gn
+Armored Core 2|ST|armored-core-2|gn
+Armored Core 3|ST|armored-core-3|gn
+Armored Core 4|ST|armored-core-4|gn
+Armored Core 5|ST|armored-core-5|gn
+Armored Core 6|ST|armored-core-6|gn
+Titanfall|SH|titanfall|gn
+Call of Duty|SH|call-of-duty|gn
+Call of Duty 2|SH|call-of-duty-2|gn
+Call of Duty 4|SH|call-of-duty-4|gn
+Modern Warfare|SH|modern-warfare|gn
+Modern Warfare 2|SH|modern-warfare-2|gn
+Modern Warfare 3|SH|modern-warfare-3|gn
+Black Ops|SH|black-ops|gn
+Black Ops 2|SH|black-ops-2|gn
+Battlefield|SH|battlefield|gn
+Battlefield 2|SH|battlefield-2|gn
+Battlefield 3|SH|battlefield-3|gn
+Battlefield 4|SH|battlefield-4|gn
+Medal of Honor|SH|medal-of-honor|gn
+Medal of Honor 2|SH|medal-of-honor-2|gn
+Medal of Honor Allied Assault|SH|medal-of-honor-allied|gn
+Brothers in Arms|SH|brothers-in-arms|gn
+Brothers in Arms 2|SH|brothers-in-arms-2|gn
+Brothers in Arms 3|SH|brothers-in-arms-3|gn
+Company of Heroes|ST|company-of-heroes|gn
+Company of Heroes 2|ST|company-of-heroes-2|gn
+Men of War|ST|men-of-war|gn
+Men of War 2|ST|men-of-war-2|gn
+Steel Division|ST|steel-division|gn
+Steel Division 2|ST|steel-division-2|gn
+Sudden Strike|ST|sudden-strike|gn
+Sudden Strike 2|ST|sudden-strike-2|gn
+Sudden Strike 3|ST|sudden-strike-3|gn
+Sudden Strike 4|ST|sudden-strike-4|gn
+Blitzkrieg|ST|blitzkrieg|gn
+Blitzkrieg 2|ST|blitzkrieg-2|gn
+Blitzkrieg 3|ST|blitzkrieg-3|gn
+Rise of Nations|ST|rise-of-nations|gn
+Age of Empires|ST|age-of-empires|gn
+Age of Empires 2|ST|age-of-empires-2|gn
+Age of Empires 3|ST|age-of-empires-3|gn
+Age of Mythology|ST|age-of-mythology|gn
+Empire Earth|ST|empire-earth|gn
+Empire Earth 2|ST|empire-earth-2|gn
+Empire Earth 3|ST|empire-earth-3|gn
+Rise of Legends|ST|rise-of-legends|gn
+Halo Wars|ST|halo-wars|gn
+Halo Wars 2|ST|halo-wars-2|gn
+StarCraft|ST|starcraft|gn
+StarCraft 2|ST|starcraft-2|gn
+Warcraft|ST|warcraft|gn
+Warcraft 2|ST|warcraft-2|gn
+Warcraft 3|ST|warcraft-3|gn
+Command and Conquer|ST|command-and-conquer|gn
+Red Alert|ST|red-alert|gn
+Red Alert 2|ST|red-alert-2|gn
+Red Alert 3|ST|red-alert-3|gn
+Tiberian Sun|ST|tiberian-sun|gn
+Tiberium Wars|ST|tiberium-wars|gn
+Generals|ST|generals|gn
+Dune 2|ST|dune-2|gn
+Dune 2000|ST|dune-2000|gn
+Total Annihilation|ST|total-annihilation|gn
+Supreme Commander|ST|supreme-commander|gn
+Supreme Commander 2|ST|supreme-commander-2|gn
+Planetary Annihilation|ST|planetary-annihilation|gn
+Homeworld|ST|homeworld|gn
+Homeworld 2|ST|homeworld-2|gn
+Sins of a Solar Empire|ST|sins-of-a-solar-empire|gn
+Endless Space|ST|endless-space|gn
+Endless Space 2|ST|endless-space-2|gn
+Endless Legend|ST|endless-legend|gn
+Galactic Civilizations|ST|galactic-civilizations|gn
+Galactic Civilizations 2|ST|galactic-civilizations-2|gn
+Galactic Civilizations 3|ST|galactic-civilizations-3|gn
+Master of Orion|ST|master-of-orion|gn
+Master of Orion 2|ST|master-of-orion-2|gn
+Master of Orion 3|ST|master-of-orion-3|gn
+Alpha Centauri|ST|alpha-centauri|gn
+Civilization|ST|civilization|gn
+Civilization 2|ST|civilization-2|gn
+Civilization 3|ST|civilization-3|gn
+Civilization 4|ST|civilization-4|gn
+Civilization 5|ST|civilization-5|gn
+Civilization 6|ST|civilization-6|gn
+Civilization Beyond Earth|ST|civilization-beyond-earth|gn
+Freeciv|ST|freeciv|gn
+Colonization|ST|colonization|gn
+Pirates|ST|pirates|gn
+Railroad Tycoon|ST|railroad-tycoon|gn
+Railroad Tycoon 2|ST|railroad-tycoon-2|gn
+Railroad Tycoon 3|ST|railroad-tycoon-3|gn
+Transport Tycoon|ST|transport-tycoon|gn
+Transport Tycoon Deluxe|ST|transport-tycoon-deluxe|gn
+OpenTTD|ST|openttd|gn
+Simutrans|ST|simutrans|gn
+Locomotion|ST|locomotion|gn
+Cities in Motion|ST|cities-in-motion|gn
+Cities in Motion 2|ST|cities-in-motion-2|gn
+A-Train|ST|a-train|gn
+A-Train 2|ST|a-train-2|gn
+A-Train 3|ST|a-train-3|gn
+A-Train 9|ST|a-train-9|gn
+Ticket to Ride|BD|ticket-to-ride|gn
+Catan|BD|catan|gn
+Carcassonne|BD|carcassonne|gn
+Monopoly|BD|monopoly|gn
+Scrabble|BD|scrabble|gn
+Chessmaster|BD|chessmaster|gn
+Lichess|BD|lichess|gn
+Shogi|BD|shogi|gn
+Go|BD|go|gn
+Reversi|BD|reversi|gn
+Backgammon|BD|backgammon|gn
+Checkers 3D|BD|checkers-3d|gn
+Othello|BD|othello|gn
+Mahjong Solitaire|P|mahjong-solitaire|gn
+Spider Solitaire|CD|spider-solitaire|gn
+Freecell|CD|freecell|gn
+Pyramid Solitaire|CD|pyramid-solitaire|gn
+Tripeaks Solitaire|CD|tripeaks-solitaire|gn
+Hearts|CD|hearts|gn
+Spades|CD|spades|gn
+Bridge|CD|bridge|gn
+Euchre|CD|euchre|gn
+Poker|CD|poker|gn
+Texas Holdem|CD|texas-holdem|gn
+Omaha|CD|omaha|gn
+Blackjack|CD|blackjack|gn
+Baccarat|CD|baccarat|gn
+Roulette|CD|roulette|gn
+Craps|CD|craps|gn
+Keno|CD|keno|gn
+Bingo|CD|bingo|gn
+Slots|CD|slots|gn
+Video Poker|CD|video-poker|gn
+Uno|CD|uno|gn
+Phase 10|CD|phase-10|gn
+Crazy Eights|CD|crazy-eights|gn
+Go Fish|CD|go-fish|gn
+Old Maid|CD|old-maid|gn
+War|CD|war|gn
+Memory|CD|memory|gn
+Concentration|CD|concentration|gn
+Snap|CD|snap|gn
+Pictionary|BD|pictionary|gn
+Charades|BD|charades|gn
+Taboo|BD|taboo|gn
+Apples to Apples|BD|apples-to-apples|gn
+Cards Against Humanity|CD|cards-against-humanity|gn
+`;
+let allGames = [];
+
+/* ==========================================================
+   CLOUD GAMES — 210 titles
+   Format: [name, slug, desc]
+   ========================================================== */
+const CLOUD_GAMES = [
+['Grand Theft Auto V','gta-v','Open world crime epic in Los Santos'],
+['Grand Theft Auto IV','gta-iv','Liberty City crime saga'],
+['Grand Theft Auto III','gta-iii','The original 3D GTA'],
+['Grand Theft Auto San Andreas','gta-san-andreas','CJ\'s story across San Andreas'],
+['Grand Theft Auto Vice City','gta-vice-city','80s Miami crime drama'],
+['Red Dead Redemption 2','red-dead-redemption-2','Western open world from Rockstar'],
+['Red Dead Redemption','red-dead-redemption','John Marston\'s western journey'],
+['Cyberpunk 2077','cyberpunk-2077','Futuristic open world RPG'],
+['Elden Ring','elden-ring','Open world action RPG from FromSoftware'],
+['Dark Souls III','dark-souls-iii','Brutal action RPG'],
+['Dark Souls II','dark-souls-ii','Dark fantasy action'],
+['Dark Souls Remastered','dark-souls-remastered','The original in HD'],
+['Sekiro Shadows Die Twice','sekiro','Shinobi action from FromSoftware'],
+['Bloodborne','bloodborne','Gothic horror action RPG'],
+['Demon\'s Souls','demons-souls','The original Souls game'],
+['Nioh 2','nioh-2','Feudal Japan action RPG'],
+['God of War','god-of-war','Norse mythology action adventure'],
+['God of War Ragnarok','god-of-war-ragnarok','Kratos vs the Norse gods'],
+['The Witcher 3 Wild Hunt','witcher-3','Fantasy open world RPG'],
+['The Witcher 2','witcher-2','Assassins of Kings'],
+['Hogwarts Legacy','hogwarts-legacy','Open world wizarding adventure'],
+['Spider-Man Remastered','spider-man','Web-slinging action adventure'],
+['Spider-Man Miles Morales','spider-man-miles','Miles takes the mantle'],
+['Assassins Creed Valhalla','assassins-creed-valhalla','Viking open world action'],
+['Assassins Creed Odyssey','assassins-creed-odyssey','Ancient Greece open world'],
+['Assassins Creed Origins','assassins-creed-origins','Ancient Egypt open world'],
+['Assassins Creed Mirage','assassins-creed-mirage','Baghdad stealth action'],
+['Assassins Creed Unity','assassins-creed-unity','French Revolution Paris'],
+['Assassins Creed Syndicate','assassins-creed-syndicate','Victorian London'],
+['Assassins Creed IV Black Flag','assassins-creed-black-flag','Pirate open world'],
+['Forza Horizon 5','forza-horizon-5','Open world racing in Mexico'],
+['Forza Horizon 4','forza-horizon-4','Racing across Britain'],
+['Forza Motorsport','forza-motorsport','Track racing simulation'],
+['Halo Infinite','halo-infinite','Sci-fi FPS from 343 Industries'],
+['Halo Master Chief Collection','halo-mcc','Every classic Halo in one'],
+['Battlefield 2042','battlefield-2042','Large-scale multiplayer FPS'],
+['Battlefield V','battlefield-v','WWII multiplayer shooter'],
+['Battlefield 1','battlefield-1','WWI multiplayer shooter'],
+['Battlefield 4','battlefield-4','Modern combat multiplayer'],
+['FIFA 23','fifa-23','Football simulation from EA'],
+['FIFA 22','fifa-22','Football simulation'],
+['EA Sports FC 24','ea-sports-fc-24','The successor to FIFA'],
+['NBA 2K23','nba-2k23','Basketball simulation'],
+['NBA 2K24','nba-2k24','Basketball simulation'],
+['Madden NFL 24','madden-nfl-24','American football simulation'],
+['Mortal Kombat 11','mortal-kombat-11','Fighting with brutal fatalities'],
+['Mortal Kombat 1','mortal-kombat-1','Reboot of the MK timeline'],
+['Resident Evil Village','resident-evil-village','Survival horror from Capcom'],
+['Resident Evil 4 Remake','resident-evil-4-remake','Leon\'s mission remade'],
+['Resident Evil 2 Remake','resident-evil-2-remake','Raccoon City survival'],
+['Resident Evil 3 Remake','resident-evil-3-remake','Jill escapes Nemesis'],
+['Resident Evil 7','resident-evil-7','First person horror'],
+['Far Cry 6','far-cry-6','Open world FPS in Yara'],
+['Far Cry 5','far-cry-5','Cult takeover in Montana'],
+['Far Cry 4','far-cry-4','Himalayan open world'],
+['Far Cry 3','far-cry-3','Tropical island insanity'],
+['Far Cry Primal','far-cry-primal','Stone age survival'],
+['Far Cry New Dawn','far-cry-new-dawn','Post-apocalyptic sequel'],
+['Watch Dogs Legion','watch-dogs-legion','Hacking open world in London'],
+['Watch Dogs 2','watch-dogs-2','Hacktivist open world in SF'],
+['Watch Dogs','watch-dogs','Chicago hacking adventure'],
+['Death Stranding','death-stranding','Post-apocalyptic delivery adventure'],
+['Days Gone','days-gone','Open world zombie survival'],
+['Horizon Zero Dawn','horizon-zero-dawn','Post-apocalyptic robot dinosaur hunting'],
+['Horizon Forbidden West','horizon-forbidden-west','Aloy heads west'],
+['Ghost of Tsushima','ghost-of-tsushima','Samurai open world adventure'],
+['Detroit Become Human','detroit-become-human','Choice-driven narrative adventure'],
+['The Last of Us Part I','the-last-of-us','Post-apocalyptic survival drama'],
+['The Last of Us Part II','the-last-of-us-part-2','Ellie\'s brutal journey'],
+['Uncharted 4 A Thief\'s End','uncharted-4','Nathan Drake\'s final adventure'],
+['Uncharted The Lost Legacy','uncharted-lost-legacy','Chloe and Nadine team up'],
+['Tomb Raider','tomb-raider','Lara\'s origin story'],
+['Rise of the Tomb Raider','rise-of-the-tomb-raider','Siberian expedition'],
+['Shadow of the Tomb Raider','shadow-of-the-tomb-raider','Mayan apocalypse'],
+['Batman Arkham Knight','batman-arkham-knight','The finale of Rocksteady\'s trilogy'],
+['Batman Arkham City','batman-arkham-city','The definitive Batman game'],
+['Batman Arkham Asylum','batman-arkham-asylum','Confined chaos in Arkham'],
+['Middle-earth Shadow of War','shadow-of-war','Nemesis system returns'],
+['Middle-earth Shadow of Mordor','shadow-of-mordor','The original Nemesis game'],
+['Mad Max','mad-max','Post-apocalyptic vehicular combat'],
+['Dying Light','dying-light','Parkour zombie survival'],
+['Dying Light 2','dying-light-2','Survive the new dark ages'],
+['Dead Island','dead-island','Zombie paradise resort'],
+['Dead Island 2','dead-island-2','The long-awaited sequel'],
+['State of Decay 2','state-of-decay-2','Open world zombie colony sim'],
+['Saints Row IV','saints-row-iv','Super-powered chaos'],
+['Saints Row The Third','saints-row-the-third','Over-the-top gangster action'],
+['Saints Row','saints-row','Reboot of the series'],
+['Sleeping Dogs','sleeping-dogs','Undercover cop in Hong Kong'],
+['Mafia III','mafia-iii','Revenge in 1968 New Bordeaux'],
+['Mafia II','mafia-ii','Italian mob in the 40s-50s'],
+['Mafia Definitive Edition','mafia-definitive','The original remade'],
+['Just Cause 4','just-cause-4','Grapple and blow stuff up'],
+['Just Cause 3','just-cause-3','Mediterranean chaos'],
+['Just Cause 2','just-cause-2','Panau island playground'],
+['Prototype 2','prototype-2','Shape-shifting revenge'],
+['Prototype','prototype','New York infected'],
+['inFAMOUS Second Son','infamous-second-son','Seattle superpowers'],
+['Call of Duty Modern Warfare II','cod-modern-warfare-ii','Task Force 141 returns'],
+['Call of Duty Modern Warfare','cod-modern-warfare','The reboot'],
+['Call of Duty Warzone','cod-warzone','Free battle royale'],
+['Call of Duty Black Ops Cold War','cod-black-ops-cold-war','Cold war espionage'],
+['Call of Duty Vanguard','cod-vanguard','WWII from multiple fronts'],
+['Call of Duty WWII','cod-wwii','Return to WWII roots'],
+['Call of Duty Black Ops III','cod-black-ops-iii','Future black ops'],
+['Call of Duty Advanced Warfare','cod-advanced-warfare','Near-future combat'],
+['Call of Duty Infinite Warfare','cod-infinite-warfare','Space combat campaign'],
+['Doom Eternal','doom-eternal','Rip and tear'],
+['Doom','doom-2016','The legendary reboot'],
+['Wolfenstein II The New Colossus','wolfenstein-2','Alternative history FPS'],
+['Wolfenstein The New Order','wolfenstein-new-order','Reboot of the series'],
+['Titanfall 2','titanfall-2','Pilot and Titan partnership'],
+['Apex Legends','apex-legends','Free hero battle royale'],
+['Overwatch 2','overwatch-2','Team-based hero shooter'],
+['Counter-Strike 2','counter-strike-2','The CS:GO successor'],
+['Counter-Strike Global Offensive','cs-go','The classic tactical shooter'],
+['Valorant','valorant','Riot\'s tactical shooter'],
+['Rainbow Six Siege','rainbow-six-siege','Tactical 5v5 shooter'],
+['Rainbow Six Extraction','rainbow-six-extraction','Co-op alien defense'],
+['Metro Exodus','metro-exodus','Post-apocalyptic Russia'],
+['Metro Last Light','metro-last-light','Tunnel war'],
+['Metro 2033','metro-2033','The original'],
+['BioShock Infinite','bioshock-infinite','Columbia in the sky'],
+['BioShock','bioshock','Welcome to Rapture'],
+['BioShock 2','bioshock-2','Return to Rapture'],
+['Half-Life 2','half-life-2','Gordon Freeman returns'],
+['Half-Life Alyx','half-life-alyx','VR prequel'],
+['Portal 2','portal-2','Still alive'],
+['Portal','portal','The cake is a lie'],
+['Borderlands 3','borderlands-3','Vault hunting returns'],
+['Borderlands 2','borderlands-2','The best in the series'],
+['Borderlands The Pre-Sequel','borderlands-pre-sequel','Claptrap in space'],
+['Destiny 2','destiny-2','Guardian shooter MMO'],
+['Crysis 3','crysis-3','Nanosuit returns'],
+['Crysis 2','crysis-2','New York invasion'],
+['Crysis','crysis','Can it run Crysis'],
+['Killzone Shadow Fall','killzone-shadow-fall','PS4 launch shooter'],
+['The Division 2','the-division-2','DC looter shooter'],
+['The Division','the-division','NYC pandemic shooter'],
+['Ghost Recon Wildlands','ghost-recon-wildlands','Bolivia open world'],
+['Ghost Recon Breakpoint','ghost-recon-breakpoint','Auroa island'],
+['Sniper Elite 5','sniper-elite-5','WWII sniping'],
+['Sniper Elite 4','sniper-elite-4','Italy 1943'],
+['Sniper Ghost Warrior 3','sniper-ghost-warrior-3','Open world sniping'],
+['Insurgency Sandstorm','insurgency-sandstorm','Hardcore tactical FPS'],
+['Squad','squad','Large-scale military sim'],
+['Hell Let Loose','hell-let-loose','WWII milsim'],
+['Escape from Tarkov','escape-from-tarkov','Hardcore extraction shooter'],
+['Hunt Showdown','hunt-showdown','PvPvE monster hunting'],
+['Deep Rock Galactic','deep-rock-galactic','Rock and stone'],
+['Left 4 Dead 2','left-4-dead-2','Zombie co-op classic'],
+['Back 4 Blood','back-4-blood','Spiritual successor to L4D'],
+['World War Z','world-war-z','Zombie swarm shooter'],
+['Vermintide 2','vermintide-2','Fantasy co-op chaos'],
+['Payday 2','payday-2','Heist co-op'],
+['Payday 3','payday-3','The crew returns'],
+['Ready or Not','ready-or-not','SWAT tactical shooter'],
+['Ground Branch','ground-branch','Tactical realism FPS'],
+['Grounded','grounded','Backyard survival'],
+['The Forest','the-forest','Island survival horror'],
+['Sons of the Forest','sons-of-the-forest','The sequel'],
+['Rust','rust','Hardcore survival PvP'],
+['ARK Survival Evolved','ark-survival','Dinosaur survival'],
+['Conan Exiles','conan-exiles','Barbarian survival'],
+['Valheim','valheim','Viking survival'],
+['Subnautica','subnautica','Underwater survival'],
+['Subnautica Below Zero','subnautica-below-zero','Arctic ocean sequel'],
+['No Mans Sky','no-mans-sky','Infinite universe exploration'],
+['Elite Dangerous','elite-dangerous','1:1 scale galaxy'],
+['Star Citizen','star-citizen','Ambitious space sim'],
+['Starfield','starfield','Bethesda\'s space RPG'],
+['The Outer Worlds','outer-worlds','Space RPG from Obsidian'],
+['Mass Effect Legendary Edition','mass-effect-legendary','All three games remastered'],
+['Mass Effect Andromeda','mass-effect-andromeda','New galaxy'],
+['Dragon Age Inquisition','dragon-age-inquisition','Fantasy RPG'],
+['Dragon Age II','dragon-age-2','Kirkwall story'],
+['Dragon Age Origins','dragon-age-origins','The original'],
+['Baldurs Gate 3','baldurs-gate-3','Modern CRPG masterpiece'],
+['Divinity Original Sin 2','divinity-original-sin-2','Tactical RPG'],
+['Path of Exile','path-of-exile','Free ARPG'],
+['Diablo IV','diablo-iv','Dark gothic ARPG'],
+['Diablo III','diablo-iii','Fast-paced ARPG'],
+['Diablo II Resurrected','diablo-2-resurrected','The classic remastered'],
+['Last Epoch','last-epoch','Time-travel ARPG'],
+['Grim Dawn','grim-dawn','Dark ARPG'],
+['Monster Hunter World','monster-hunter-world','Hunt giant monsters'],
+['Monster Hunter Rise','monster-hunter-rise','Wirebug mobility'],
+['Final Fantasy XV','final-fantasy-xv','Open world JRPG'],
+['Final Fantasy VII Remake','final-fantasy-vii-remake','Midgar remade'],
+['Final Fantasy XVI','final-fantasy-xvi','Action RPG'],
+['Persona 5 Royal','persona-5-royal','Stylish JRPG'],
+['Persona 4 Golden','persona-4-golden','Countryside mystery'],
+['Persona 3 Reload','persona-3-reload','The remake'],
+['Nier Automata','nier-automata','Existential action RPG'],
+['Nier Replicant','nier-replicant','The prequel'],
+['Kingdom Come Deliverance','kingdom-come','Medieval realism RPG'],
+['Disco Elysium','disco-elysium','Philosophical detective RPG'],
+['Pillars of Eternity II','pillars-of-eternity-2','Deep CRPG'],
+['Wasteland 3','wasteland-3','Post-apocalyptic tactical RPG'],
+['XCOM 2','xcom-2','Alien resistance tactics'],
+['XCOM Enemy Unknown','xcom-enemy-unknown','The reboot'],
+['Civilization VI','civilization-6','Build an empire'],
+['Civilization V','civilization-5','Hex-based strategy'],
+['Total War Warhammer III','total-war-warhammer-3','Fantasy large-scale battles'],
+['Total War Three Kingdoms','total-war-three-kingdoms','Ancient China'],
+['Age of Empires IV','age-of-empires-4','Medieval RTS'],
+['StarCraft II','starcraft-2','Sci-fi RTS'],
+['Company of Heroes 2','company-of-heroes-2','WWII RTS'],
+['Crusader Kings III','crusader-kings-3','Medieval dynasty sim'],
+['Stellaris','stellaris','Space 4X grand strategy']
+];
+
+/* ==========================================================
+   TV PROVIDERS — 8 sources with ZXCStream added back
+   Each url(t, id, s, e) => string
+   ========================================================== */
+const PROVIDERS = [
+  { id:'zxcstream', name:'ZXCStream',
+    url:(t,id,s,e) => t==='tv'
+      ? `https://zxcstream.vercel.app/tv/${id}/${s}/${e}`
+      : `https://zxcstream.vercel.app/movie/${id}` },
+  { id:'vidsrc-me', name:'VidSrc.me',
+    url:(t,id,s,e) => t==='tv'
+      ? `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+      : `https://vidsrc.me/embed/movie?tmdb=${id}` },
+  { id:'vidsrc-xyz', name:'VidSrc.xyz',
+    url:(t,id,s,e) => t==='tv'
+      ? `https://vidsrc.xyz/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+      : `https://vidsrc.xyz/embed/movie?tmdb=${id}` },
+  { id:'vidlink', name:'VidLink',
+    url:(t,id,s,e) => t==='tv'
+      ? `https://vidlink.pro/tv/${id}/${s}/${e}`
+      : `https://vidlink.pro/movie/${id}` },
+  { id:'2embed', name:'2Embed',
+    url:(t,id,s,e) => t==='tv'
+      ? `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`
+      : `https://www.2embed.cc/embed/${id}` },
+  { id:'smashy', name:'SmashyStream',
+    url:(t,id,s,e) => `https://embed.smashystream.com/playere.php?tmdb=${id}${t==='tv'?`&season=${s}&episode=${e}`:''}` },
+  { id:'multiembed', name:'MultiEmbed',
+    url:(t,id,s,e) => t==='tv'
+      ? `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=${s}&e=${e}`
+      : `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1` },
+  { id:'vidsrc-cc', name:'VidSrc.cc',
+    url:(t,id,s,e) => t==='tv'
+      ? `https://vidsrc.cc/v2/embed/tv/${id}/${s}/${e}`
+      : `https://vidsrc.cc/v2/embed/movie/${id}` }
+];
+
+/* ==========================================================
+   FAVICONS
+   ========================================================== */
+const ICONS = {
+  narxy: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%238b5cf6' d='M24 4l4.8 14.8H44l-12 9.2 4.6 14.8L24 33.6 11.4 42.8 16 28 4 18.8h15.2z'/%3E%3C/svg%3E",
+  classroom: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='4' y='6' width='40' height='36' fill='%23F4B400'/%3E%3Crect x='8' y='10' width='32' height='28' fill='%231E8E3E'/%3E%3Crect x='30' y='10' width='10' height='28' fill='%23F4B400'/%3E%3Ccircle cx='17' cy='20' r='3' fill='%23fff'/%3E%3Cpath d='M11 30c0-3.3 2.7-6 6-6s6 2.7 6 6' fill='%23fff'/%3E%3Crect x='11' y='31' width='12' height='2' fill='%23fff'/%3E%3C/svg%3E",
+  google: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z'/%3E%3Cpath fill='%23FF3D00' d='M6.3 14.7l6.6 4.8C14.6 15.1 18.9 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z'/%3E%3Cpath fill='%234CAF50' d='M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z'/%3E%3Cpath fill='%231976D2' d='M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.6l6.2 5.2C40.9 35.7 44 30.3 44 24c0-1.3-.1-2.3-.4-3.5z'/%3E%3C/svg%3E",
+  docs: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%234285F4' d='M12 4h18l12 12v28a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z'/%3E%3Cpath fill='%23A1C2FA' d='M30 4v12h12z'/%3E%3Cpath fill='%23fff' d='M16 22h16v2H16zm0 6h16v2H16zm0 6h10v2H16z'/%3E%3C/svg%3E",
+  drive: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M17 6h14l14 24H31z'/%3E%3Cpath fill='%231976D2' d='M3 30L17 6l7 12-14 24z'/%3E%3Cpath fill='%234CAF50' d='M10 42l7-12h28l-7 12z'/%3E%3C/svg%3E",
+  gmail: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%234285F4' d='M6 12v24h6V20l12 9 12-9v16h6V12l-18 13.5z'/%3E%3Cpath fill='%2334A853' d='M6 12l18 13.5L42 12v3L24 28.5 6 15z'/%3E%3Cpath fill='%23EA4335' d='M6 12v3l18 13.5L42 15v-3L24 25.5z'/%3E%3Cpath fill='%23FBBC04' d='M6 36h6V22l-6-3z'/%3E%3Cpath fill='%23EA4335' d='M42 36h-6V22l6-3z'/%3E%3C/svg%3E",
+  book: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23d4a574' d='M6 6h36v6H6zm0 6v30h36V12z'/%3E%3Cpath fill='%23a67c52' d='M6 36h36v6H6z'/%3E%3Cpath fill='%23fff' d='M10 16h12v20H10zm16 0h12v20H26z'/%3E%3C/svg%3E",
+  chalk: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect x='4' y='6' width='40' height='32' fill='%23222'/%3E%3Crect x='2' y='36' width='44' height='6' fill='%238b5cf6'/%3E%3Cpath fill='%23fff' d='M12 16h18v2H12zm0 6h14v2H12zm0 6h10v2H12z'/%3E%3C/svg%3E"
+};
+function setFav(w){ document.getElementById('faviconLink').href = ICONS[w] || ICONS.narxy; }
+
+/* ==========================================================
+   CATEGORY MAP
+   ========================================================== */
+const CAT_MAP = {P:'Puzzle',A:'Arcade',PL:'Platformer',SH:'Shooter',RC:'Racing',SP:'Sports',IO:'IO',HR:'Horror',AC:'Action',CS:'Casual',ID:'Idle',MP:'Multiplayer','3D':'3D',ST:'Strategy',SB:'Sandbox',AV:'Adventure',BD:'Board',CD:'Card',WD:'Word',QZ:'Quiz',RPG:'RPG',FT:'Fighting'};
+
+/* ==========================================================
+   STATE
+   ========================================================== */
+const THEMES = [
+  {id:'opium',name:'Opium',bg:'#08080c',accent:'#8b5cf6'},
+  {id:'matrix',name:'Matrix',bg:'#000800',accent:'#22c55e'},
+  {id:'cyber',name:'Cyber',bg:'#020a14',accent:'#06b6d4'},
+  {id:'crimson',name:'Crimson',bg:'#0a0202',accent:'#ef4444'},
+  {id:'sunset',name:'Sunset',bg:'#0f0508',accent:'#f97316'},
+  {id:'nord',name:'Nord',bg:'#2e3440',accent:'#88c0d0'},
+  {id:'dracula',name:'Dracula',bg:'#282a36',accent:'#ff79c6'},
+  {id:'light',name:'Light',bg:'#f4f5f8',accent:'#7c3aed'}
+];
+let activeZone = 'all';
+let tracks = [];
+let trackIdx = -1;
+let chat = {client:null,room:'',nick:''};
+let currentSection = 'games';
+let currentMovie = null;
+let currentCloudSlug = '';
+let testToken = 0;
+let settings = {theme:'opium',autoCloak:true,cloakOnLoad:false,cloakTitle:'Google Classroom',cloakFavicon:'classroom',panicKey:'Escape'};
+
+/* ==========================================================
+   SETTINGS
+   ========================================================== */
+function loadSettings(){try{settings={...settings,...JSON.parse(localStorage.getItem('narxy_settings')||'{}')}}catch(e){};applySettings()}
+function saveSettings(){try{localStorage.setItem('narxy_settings',JSON.stringify(settings))}catch(e){}}
+function setSetting(k,v){settings[k]=v;saveSettings();applySettings();toast('Saved');if(k==='theme')refreshThemePicker();if(k==='cloakFavicon')refreshFavPicker()}
+function applySettings(){document.body.setAttribute('data-theme',settings.theme);document.body.setAttribute('data-cloak-title',settings.cloakTitle||'Google Classroom')}
+function resetAll(){localStorage.removeItem('narxy_settings');settings={theme:'opium',autoCloak:true,cloakOnLoad:false,cloakTitle:'Google Classroom',cloakFavicon:'classroom',panicKey:'Escape'};applySettings();renderDrawer();toast('Reset')}
+
+/* ==========================================================
+   CLOAK
+   ========================================================== */
+const HOME_TITLE='NarxyUBG';
+function toggleCloak(){document.body.classList.toggle('cloaked');const c=document.body.classList.contains('cloaked');document.title=c?(settings.cloakTitle||'Google Classroom'):HOME_TITLE;setFav(c?(settings.cloakFavicon||'classroom'):'narxy')}
+function onVis(){if(!settings.autoCloak)return;if(document.hidden){document.title=settings.cloakTitle||'Google Classroom';setFav(settings.cloakFavicon||'classroom')}else{document.title=HOME_TITLE;setFav('narxy')}}
+document.addEventListener('visibilitychange',onVis);
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCmdk();return}
+  if(e.key==='Escape'){
+    if(document.getElementById('cmdk').classList.contains('on'))return closeCmdk();
+    if(document.getElementById('gameModal').classList.contains('on'))return closeGame();
+    if(document.getElementById('cloudModal').classList.contains('on'))return closeCloud();
+    if(document.getElementById('movieModal').classList.contains('on'))return closeMovie();
+    if(document.getElementById('aiModal').classList.contains('on'))return closeAI();
+    if(document.getElementById('accountModal').classList.contains('on'))return closeAccount();
+    if(document.getElementById('drawer').classList.contains('on'))return closeDrawer();
+  }
+  const pk=settings.panicKey;
+  if((pk==='`'&&e.key==='`')||(pk==='~'&&e.key==='~')||(pk==='q'&&e.shiftKey&&e.key.toLowerCase()==='q')||(pk==='x'&&e.shiftKey&&e.key.toLowerCase()==='x'))toggleCloak();
+});
+
+/* ==========================================================
+   NAVIGATION
+   ========================================================== */
+document.getElementById('navTabs').addEventListener('click',e=>{const t=e.target.closest('.nav-tab');if(t)switchSection(t.dataset.tab)});
+function switchSection(name){
+  currentSection=name;
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id==='sec-'+name));
+  renderSubnav();window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderSubnav(){
+  const bar=document.getElementById('subnav');bar.innerHTML='';
+  const map={games:gamesSubnav,cloud:cloudSubnav,movies:tvSubnav,music:musicSubnav,youtube:ytSubnav,chat:chatSubnav};
+  (map[currentSection]||(()=>{}))(bar);
+}
+function gamesSubnav(bar){
+  const t=document.createElement('div');t.className='subnav-title';t.textContent='Zones';bar.appendChild(t);
+  const d=document.createElement('div');d.className='subnav-divider';bar.appendChild(d);
+  const zones=['all',...new Set(allGames.map(g=>g.category).filter(Boolean))].slice(0,26);
+  zones.forEach(z=>{const c=document.createElement('button');c.className='chip'+(z===activeZone?' active':'');c.textContent=z==='all'?'All games':z;c.onclick=()=>{activeZone=z;renderSubnav();renderGames()};bar.appendChild(c)});
+  const s=document.createElement('input');s.className='subnav-search';s.placeholder='Search games…';s.oninput=()=>filterGames(s.value);bar.appendChild(s);
+}
+function cloudSubnav(bar){
+  const t=document.createElement('div');t.className='subnav-title';t.textContent='210 PC Games · RaccoonGame Cloud';bar.appendChild(t);
+  const d=document.createElement('div');d.className='subnav-divider';bar.appendChild(d);
+  const s=document.createElement('input');s.className='subnav-search';s.placeholder='Search cloud games…';s.oninput=()=>filterCloud(s.value);bar.appendChild(s);
+}
+function tvSubnav(bar){
+  const s=document.createElement('input');s.className='subnav-search';s.placeholder='Search TV shows and movies…';s.onkeydown=e=>{if(e.key==='Enter')searchMovies(s.value.trim())};bar.appendChild(s);
+  const b=document.createElement('button');b.className='chip';b.textContent='Search';b.onclick=()=>searchMovies(s.value.trim());bar.appendChild(b);
+  const provs=(()=>{try{return localStorage.getItem('narxy_provider')||'auto'}catch(e){return 'auto'}})();
+  const w=document.createElement('div');w.className='subnav-title';w.style.marginLeft='auto';w.innerHTML='<span style="color:var(--text-mute)">Source: </span>'+provs;bar.appendChild(w);
+}
+function musicSubnav(bar){
+  const s=document.createElement('input');s.className='subnav-search';s.placeholder='Search songs, artists, albums…';s.onkeydown=e=>{if(e.key==='Enter')searchMusic(s.value.trim())};bar.appendChild(s);
+  const b=document.createElement('button');b.className='chip';b.textContent='Search';b.onclick=()=>searchMusic(s.value.trim());bar.appendChild(b);
+}
+function ytSubnav(bar){
+  const s=document.createElement('input');s.className='subnav-search';s.placeholder='Paste YouTube URL or search…';s.onkeydown=e=>{if(e.key==='Enter')searchYouTube(s.value.trim())};bar.appendChild(s);
+  const b=document.createElement('button');b.className='chip';b.textContent='Play';b.onclick=()=>searchYouTube(s.value.trim());bar.appendChild(b);
+}
+function chatSubnav(bar){
+  const t=document.createElement('div');t.className='subnav-title';t.textContent='Global room — everyone sees every message';bar.appendChild(t);
+}
+
+/* ==========================================================
+   GAMES
+   ========================================================== */
+function loadAllGames(){
+  const lines=GAMES_RAW.trim().split('\n');
+  allGames=lines.map(line=>{
+    const [name,cat,slug,src]=line.split('|');
+    return {name,category:CAT_MAP[cat]||cat,slug,source:src,url:src==='kh'?CFG.KH_BASE+slug+'/index.html':CFG.GN_BASE+slug+'/index.html'};
+  });
+  document.getElementById('gamesStats').textContent=allGames.length.toLocaleString()+' games · '+new Set(allGames.map(g=>g.category)).size+' zones';
+  renderSubnav();renderGames();
+}
+function iconFor(cat){
+  const c=(cat||'').toLowerCase();
+  if(c.includes('shoot'))return'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>';
+  if(c.includes('puzzle'))return'<svg viewBox="0 0 24 24"><path d="M4 4h6v4a2 2 0 1 0 4 0V4h6v6h-4a2 2 0 1 0 0 4h4v6h-6v-4a2 2 0 1 1-4 0v4H4v-6h4a2 2 0 1 1 0-4H4z"/></svg>';
+  if(c.includes('rac'))return'<svg viewBox="0 0 24 24"><path d="M4 14l1.5-5h13L20 14v4H4z"/><circle cx="8" cy="18" r="1.5"/><circle cx="16" cy="18" r="1.5"/></svg>';
+  if(c.includes('sport'))return'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>';
+  if(c.includes('io'))return'<svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/></svg>';
+  if(c.includes('horror'))return'<svg viewBox="0 0 24 24"><path d="M5 20V10a7 7 0 1 1 14 0v10l-2-2-2 2-2-2-2 2-2-2-2 2z"/></svg>';
+  if(c.includes('fight'))return'<svg viewBox="0 0 24 24"><path d="M7 11V7a2 2 0 1 1 4 0v4M11 11V5a2 2 0 1 1 4 0v6M15 11V7a2 2 0 1 1 4 0v7a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6v-3a2 2 0 1 1 4 0z"/></svg>';
+  if(c.includes('strategy'))return'<svg viewBox="0 0 24 24"><path d="M12 2v4M9 6h6l1 4H8zM5 10h14v10H5z"/></svg>';
+  if(c.includes('adventure'))return'<svg viewBox="0 0 24 24"><path d="M3 6l9-3 9 3-9 3-9-3zM3 6v12l9 3 9-3V6"/></svg>';
+  if(c.includes('rpg'))return'<svg viewBox="0 0 24 24"><path d="M12 2v6M9 8h6l1 4H8zM7 12h10v8H7z"/></svg>';
+  if(c.includes('arcade'))return'<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="10" rx="3"/><path d="M8 13h2M9 12v2"/><circle cx="15" cy="13" r="1"/></svg>';
+  if(c.includes('platformer'))return'<svg viewBox="0 0 24 24"><path d="M4 18h6v-4h4V8h6v10"/></svg>';
+  if(c.includes('card'))return'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="10" height="14" rx="2"/><rect x="10" y="6" width="10" height="14" rx="2"/></svg>';
+  if(c.includes('board'))return'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><path d="M4 10h16M4 16h16M10 4v16M16 4v16"/></svg>';
+  if(c.includes('word')||c.includes('quiz'))return'<svg viewBox="0 0 24 24"><path d="M5 3h11l4 4v14H5z"/><path d="M9 12h8M9 16h5"/></svg>';
+  if(c.includes('idle')||c.includes('casual'))return'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>';
+  if(c.includes('multiplayer'))return'<svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2 20c0-3 3-5 6-5s6 2 6 5M14 20c0-3 3-5 6-5s6 2 6 5"/></svg>';
+  return'<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="3"/><path d="M8 12h2M9 11v2"/><circle cx="15" cy="12" r="1"/></svg>';
+}
+function renderGames(){
+  const grid=document.getElementById('gamesGrid');
+  const list=activeZone==='all'?allGames:allGames.filter(g=>g.category===activeZone);
+  if(!list.length){grid.innerHTML='<div class="empty"><p>No games in this zone.</p></div>';return}
+  const visible=list.slice(0,600);
+  grid.innerHTML=visible.map(g=>`<div class="game-tile" onclick="openGameByName('${escapeAttr(g.name)}')"><div class="tile-icon">${iconFor(g.category)}</div><h4 title="${escapeAttr(g.name)}">${escapeHtml(g.name)}</h4><p>${escapeHtml(g.category)}</p></div>`).join('');
+  if(list.length>600){const n=document.createElement('div');n.className='empty';n.style.gridColumn='1/-1';n.innerHTML=`<p>Showing 600 of ${list.length.toLocaleString()}</p><small>Use search to narrow down</small>`;grid.appendChild(n)}
+}
+function filterGames(q){
+  const grid=document.getElementById('gamesGrid');
+  const base=activeZone==='all'?allGames:allGames.filter(g=>g.category===activeZone);
+  const list=q?base.filter(g=>g.name.toLowerCase().includes(q.toLowerCase())):base;
+  if(!list.length){grid.innerHTML=`<div class="empty"><p>No games match "${escapeHtml(q)}"</p></div>`;return}
+  const visible=list.slice(0,600);
+  grid.innerHTML=visible.map(g=>`<div class="game-tile" onclick="openGameByName('${escapeAttr(g.name)}')"><div class="tile-icon">${iconFor(g.category)}</div><h4>${escapeHtml(g.name)}</h4><p>${escapeHtml(g.category)}</p></div>`).join('');
+  if(list.length>600){const n=document.createElement('div');n.className='empty';n.style.gridColumn='1/-1';n.innerHTML=`<p>Showing 600 of ${list.length.toLocaleString()}</p>`;grid.appendChild(n)}
+}
+function openGameByName(name){
+  const g=allGames.find(x=>x.name===name);
+  if(!g)return;
+  document.getElementById('gameTitle').textContent=g.name;
+  document.getElementById('gameBody').innerHTML=`<div class="frame-wrap"><iframe src="${escapeAttr(g.url)}" allowfullscreen allow="fullscreen;gamepad;autoplay" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" style="min-height:0"></iframe></div>`;
+  document.getElementById('gameModal').classList.add('on');
+}
+function closeGame(){document.getElementById('gameModal').classList.remove('on');document.getElementById('gameBody').innerHTML=''}
+
+/* ==========================================================
+   CLOUD GAMING — embedded raccoongame.com via iframe
+   ========================================================== */
+function renderCloud(){
+  const grid=document.getElementById('cloudGrid');
+  const visible=CLOUD_GAMES.slice(0,400);
+  grid.innerHTML=visible.map(([n,s,d])=>`
+    <div class="cloud-card" onclick="launchCloud('${escapeAttr(s)}')">
+      <div class="cc-icon"><svg viewBox="0 0 24 24"><path d="M6 16a4 4 0 0 1 .5-7.9A6 6 0 0 1 18 9a4 4 0 0 1 .5 7.9H6z"/></svg></div>
+      <div class="cc-body">
+        <h4>${escapeHtml(n)}</h4>
+        <p>${escapeHtml(d)}</p>
+      </div>
+    </div>
+  `).join('');
+}
+function filterCloud(q){
+  const grid=document.getElementById('cloudGrid');
+  const list=q?CLOUD_GAMES.filter(g=>g[0].toLowerCase().includes(q.toLowerCase())):CLOUD_GAMES;
+  if(!list.length){grid.innerHTML=`<div class="empty"><p>No cloud games match</p></div>`;return}
+  grid.innerHTML=list.map(([n,s,d])=>`
+    <div class="cloud-card" onclick="launchCloud('${escapeAttr(s)}')">
+      <div class="cc-icon"><svg viewBox="0 0 24 24"><path d="M6 16a4 4 0 0 1 .5-7.9A6 6 0 0 1 18 9a4 4 0 0 1 .5 7.9H6z"/></svg></div>
+      <div class="cc-body">
+        <h4>${escapeHtml(n)}</h4>
+        <p>${escapeHtml(d)}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* Launch cloud game embedded via iframe */
+function launchCloud(slug){
+  currentCloudSlug=slug;
+  const name=slug?((CLOUD_GAMES.find(g=>g[1]===slug)||[])[0]||slug):'RaccoonGame';
+  const url=slug?`${CFG.RACCOON}/games/${slug}`:`${CFG.RACCOON}`;
+  document.getElementById('cloudTitle').textContent=name;
+  document.getElementById('cloudBody').innerHTML=`
+    <div style="height:100%;position:relative;">
+      <iframe id="cloudFrame" src="${escapeAttr(url)}" allow="autoplay; fullscreen; gamepad; clipboard-write" allowfullscreen style="width:100%;height:100%;border:none;display:block;background:#000;"></iframe>
+      <div id="cloudFallback" class="player-status" style="display:none;">
+        <svg viewBox="0 0 24 24" style="width:44px;height:44px;fill:none;stroke:var(--text-mute);stroke-width:1.4"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.01"/></svg>
+        <div style="max-width:400px;">
+          <div style="font-weight:600;color:var(--text);margin-bottom:8px;">Embedding blocked by RaccoonGame</div>
+          <div style="font-size:.82rem;line-height:1.5;">Their server sent an X-Frame-Options header that prevents iframe embedding — the same security measure streaming sites use to prevent wrapping. Use the "Open in new tab" button above to launch this game directly.</div>
+        </div>
+        <button class="cloud-btn primary" onclick="openCloudExternal('${escapeAttr(slug)}')" style="margin-top:8px;">
+          <svg viewBox="0 0 24 24"><path d="M15 3h6v6M21 3l-9 9M14 4H5v15h15v-9"/></svg>
+          Open RaccoonGame in new tab
+        </button>
+      </div>
+    </div>
+  `;
+  document.getElementById('cloudModal').classList.add('on');
+
+  // Watch for frame-bust: if the iframe never gains size or immediately errors, show fallback
+  const frame=document.getElementById('cloudFrame');
+  let loaded=false;
+  frame.onload=()=>{loaded=true};
+  frame.onerror=()=>showCloudFallback();
+  setTimeout(()=>{
+    // If after 6 seconds the iframe hasn't fired onload at all, it's likely blocked
+    if(!loaded) showCloudFallback();
+  },6000);
+}
+function showCloudFallback(){
+  const fb=document.getElementById('cloudFallback');
+  const fr=document.getElementById('cloudFrame');
+  if(fb) fb.style.display='flex';
+  if(fr) fr.style.display='none';
+}
+function openCloudExternal(slug){
+  const url=slug?`${CFG.RACCOON}/games/${slug}`:CFG.RACCOON;
+  window.open(url,'_blank','noopener,noreferrer');
+}
+function closeCloud(){
+  document.getElementById('cloudModal').classList.remove('on');
+  document.getElementById('cloudBody').innerHTML='';
+  currentCloudSlug='';
+}
+
+/* ==========================================================
+   TV SHOWS & MOVIES — auto-tests via CORS proxy
+   ========================================================== */
+function getWorkingProvider(){try{return localStorage.getItem('narxy_provider')||null}catch(e){return null}}
+function setWorkingProvider(id){try{localStorage.setItem('narxy_provider',id)}catch(e){}}
+
+async function searchMovies(q){
+  const grid=document.getElementById('moviesGrid');
+  if(!q)return;
+  grid.innerHTML='<div class="loading"><div class="spinner"></div>Searching…</div>';
+  try{
+    const r=await fetch(`${CFG.TMDB}/search/multi?api_key=${CFG.TMDB_KEY}&query=${encodeURIComponent(q)}&include_adult=false`);
+    const d=await r.json();
+    const all=(d.results||[]).filter(x=>x.media_type==='movie'||x.media_type==='tv');
+    const tv=all.filter(x=>x.media_type==='tv');
+    const mv=all.filter(x=>x.media_type==='movie');
+    const items=[...tv,...mv].slice(0,40);
+    if(!items.length){grid.innerHTML=`<div class="empty"><p>No results for "${escapeHtml(q)}"</p></div>`;return}
+    grid.innerHTML=items.map(x=>{
+      const title=x.title||x.name;
+      const year=(x.release_date||x.first_air_date||'').slice(0,4);
+      const poster=x.poster_path?CFG.IMG+'/w342'+x.poster_path:'';
+      const isTV=x.media_type==='tv';
+      const type=isTV?'TV':'Movie';
+      const meta=JSON.stringify({id:x.id,title,year,type,poster,overview:x.overview||''}).replace(/'/g,"&#39;");
+      return `<div class="media-tile" onclick='openMovie(${meta})'>
+        <div class="poster">
+          <span class="badge ${isTV?'tv':''}">${type}</span>
+          ${poster?`<img src="${poster}" loading="lazy" alt="">`:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/></svg>'}
+        </div>
+        <div class="meta"><h4>${escapeHtml(title)}</h4><p>${type} · ${year||'—'}</p></div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    grid.innerHTML='<div class="empty"><p>Search failed.</p></div>';
+  }
+}
+
+function openMovie(m){
+  currentMovie=m;
+  document.getElementById('movieTitle').textContent=`${m.title} (${m.year||'—'})`;
+  const tagCls=m.type==='TV'?'tag tv':'tag accent';
+  const working=getWorkingProvider();
+  const ordered=working?[...PROVIDERS.filter(p=>p.id===working),...PROVIDERS.filter(p=>p.id!==working)]:PROVIDERS;
+  const seHTML=m.type==='TV'?`<div class="se-inputs"><label>Season</label><input type="number" id="seS" min="1" max="30" value="1"><label>Episode</label><input type="number" id="seE" min="1" max="60" value="1"></div>`:'';
+  document.getElementById('movieBody').innerHTML=`
+    <div class="movie-detail">
+      <div class="movie-hero">
+        ${m.poster?`<img class="movie-poster-lg" src="${m.poster}" alt="">`:'<div class="movie-poster-lg"></div>'}
+        <div class="movie-meta-lg">
+          <h2>${escapeHtml(m.title)}</h2>
+          <div class="tags"><span class="${tagCls}">${m.type}</span><span class="tag">${m.year||'—'}</span></div>
+          <p class="overview">${escapeHtml(m.overview||'No overview available.').slice(0,400)}</p>
+          ${seHTML}
+        </div>
+      </div>
+      <div class="player-shell" id="playerShell">
+        <div class="player-placeholder" id="playPlaceholder">
+          <button class="play-btn" onclick="startPlayback()">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <div class="play-hint">Click Play — we test each streaming source through a proxy, pick the first one that returns real content, and remember it for next time.</div>
+          <div class="play-providers" id="providerRow">
+            ${ordered.map(p=>`<span class="play-provider" data-pid="${p.id}">${p.name}${p.id===working?' ★':''}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('movieModal').classList.add('on');
+}
+
+async function startPlayback(){
+  if(!currentMovie)return;
+  const working=getWorkingProvider();
+  const ordered=working?[...PROVIDERS.filter(p=>p.id===working),...PROVIDERS.filter(p=>p.id!==working)]:PROVIDERS;
+  const isTV=currentMovie.type==='TV';
+  const season=isTV?parseInt(document.getElementById('seS')?.value||'1',10):1;
+  const episode=isTV?parseInt(document.getElementById('seE')?.value||'1',10):1;
+  const token=++testToken;
+  const placeholder=document.getElementById('playPlaceholder');
+  const shell=document.getElementById('playerShell');
+  placeholder.style.display='none';
+
+  for(let i=0;i<ordered.length;i++){
+    if(token!==testToken)return;
+    const provider=ordered[i];
+    updateProviderUI(provider.id,'testing');
+    shell.querySelectorAll('iframe.test-frame').forEach(f=>f.remove());
+
+    const url=provider.url(isTV?'tv':'movie',currentMovie.id,season,episode);
+    const ok=await testProvider(url);
+    if(token!==testToken)return;
+
+    if(ok){
+      updateProviderUI(provider.id,'ok');
+      setWorkingProvider(provider.id);
+      toast('Using '+provider.name);
+      const iframe=document.createElement('iframe');
+      iframe.setAttribute('allow','autoplay; fullscreen; encrypted-media; picture-in-picture');
+      iframe.setAttribute('allowfullscreen','');
+      iframe.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:none;background:#000;';
+      iframe.src=url;
+      shell.appendChild(iframe);
+      return;
+    } else {
+      updateProviderUI(provider.id,'err');
+    }
+  }
+  if(token!==testToken)return;
+  shell.innerHTML=`<div class="player-placeholder">
+    <svg viewBox="0 0 24 24" style="width:48px;height:48px;fill:none;stroke:var(--text-mute);stroke-width:1.4"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.01"/></svg>
+    <div class="play-hint">None of the sources responded. Try again later or pick a different title.</div>
+    <button class="cloud-btn ghost" onclick="startPlayback()">Retry</button>
+  </div>`;
+}
+
+function updateProviderUI(pid,state){
+  const row=document.getElementById('providerRow');
+  if(!row)return;
+  row.querySelectorAll('.play-provider').forEach(el=>{
+    if(el.dataset.pid===pid){
+      el.classList.remove('testing','ok','err','active');
+      if(state==='testing')el.classList.add('testing','active');
+      if(state==='ok')el.classList.add('ok');
+      if(state==='err')el.classList.add('err');
+    }
+  });
+}
+
+/* Test a provider by fetching its URL through allorigins CORS proxy */
+async function testProvider(url){
+  try{
+    const ctl=new AbortController();
+    const to=setTimeout(()=>ctl.abort(),7000);
+    const res=await fetch(CFG.PROXY+encodeURIComponent(url),{signal:ctl.signal});
+    clearTimeout(to);
+    if(!res.ok)return false;
+    const html=await res.text();
+    if(!html||html.length<300)return false;
+    const low=html.toLowerCase();
+    // Error markers that indicate the provider returned a "not found" page
+    const errs=['video not found','movie not found','tv show not found','404 not found','not available','no sources','no video','error loading','file not found','content not found'];
+    for(const e of errs)if(low.includes(e))return false;
+    // Positive markers — provider must reference the video/player
+    const good=low.includes('<video')||low.includes('<iframe')||low.includes('jwplayer')||low.includes('videojs')||low.includes('player')||low.includes('source');
+    if(!good)return false;
+    return true;
+  }catch(e){return false}
+}
+
+function closeMovie(){
+  testToken++;
+  document.getElementById('movieModal').classList.remove('on');
+  document.getElementById('movieBody').innerHTML='';
+  currentMovie=null;
+}
+
+/* ==========================================================
+   MUSIC
+   ========================================================== */
+async function searchMusic(q){
+  const list=document.getElementById('trackList');
+  if(!q)return;
+  list.innerHTML='<div class="loading"><div class="spinner"></div>Searching…</div>';
+  try{
+    const r=await fetch(`${CFG.ITUNES}?term=${encodeURIComponent(q)}&media=music&limit=25`);
+    const d=await r.json();
+    tracks=(d.results||[]).filter(t=>t.previewUrl);
+    if(!tracks.length){list.innerHTML=`<div class="empty"><p>No results</p></div>`;return}
+    list.innerHTML=tracks.map((t,i)=>`<div class="track" data-idx="${i}" onclick="playTrack(${i})"><div class="track-art">${t.artworkUrl60?`<img src="${t.artworkUrl60}" alt="">`:''}</div><div class="track-info"><h4>${escapeHtml(t.trackName||'Untitled')}</h4><p>${escapeHtml(t.artistName||'Unknown')}</p></div><div class="track-dur">${fmt((t.trackTimeMillis||0)/1000)}</div></div>`).join('');
+  }catch(e){list.innerHTML='<div class="empty"><p>Search failed.</p></div>'}
+}
+function playTrack(i){
+  if(i<0||i>=tracks.length)return;
+  trackIdx=i;const t=tracks[i];const a=document.getElementById('audioEl');
+  document.getElementById('musicPlayer').classList.add('on');
+  document.getElementById('nowTitle').textContent=t.trackName||'Untitled';
+  document.getElementById('nowArtist').textContent=t.artistName||'Unknown';
+  document.getElementById('nowArt').innerHTML=t.artworkUrl100?`<img src="${t.artworkUrl100}">`:'<svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>';
+  a.src=t.previewUrl;a.play().catch(()=>{});
+  document.querySelectorAll('.track').forEach(el=>el.classList.toggle('active',+el.dataset.idx===i));
+}
+function togglePlay(){const a=document.getElementById('audioEl');if(!a.src)return;a.paused?a.play():a.pause()}
+function nextTrack(){if(trackIdx<tracks.length-1)playTrack(trackIdx+1)}
+function prevTrack(){if(trackIdx>0)playTrack(trackIdx-1)}
+function seekAudio(v){const a=document.getElementById('audioEl');if(a.duration)a.currentTime=(v/100)*a.duration}
+function fmt(s){s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+const audioEl=document.getElementById('audioEl');
+audioEl.addEventListener('timeupdate',()=>{if(!audioEl.duration)return;document.getElementById('tCur').textContent=fmt(audioEl.currentTime);document.getElementById('tDur').textContent=fmt(audioEl.duration);document.getElementById('seek').value=(audioEl.currentTime/audioEl.duration)*100});
+audioEl.addEventListener('ended',nextTrack);
+audioEl.addEventListener('play',()=>{document.getElementById('playBtn').innerHTML='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'});
+audioEl.addEventListener('pause',()=>{document.getElementById('playBtn').innerHTML='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'});
+
+/* ==========================================================
+   YOUTUBE
+   ========================================================== */
+function extractYTId(input){
+  const ps=[/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})/,/^([A-Za-z0-9_-]{11})$/];
+  for(const p of ps){const m=input.match(p);if(m)return m[1]}
+  return null;
+}
+function searchYouTube(q){
+  if(!q)return;
+  const vid=extractYTId(q);
+  document.getElementById('ytPlayer').classList.add('on');
+  document.getElementById('ytEmpty').style.display='none';
+  document.getElementById('ytFrame').src=vid?`https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1&autoplay=1`:`https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}&rel=0&modestbranding=1`;
+}
+
+/* ==========================================================
+   CHAT
+   ========================================================== */
+const chatId='chat_'+Math.random().toString(36).slice(2,10);
+function joinChat(){
+  const room=document.getElementById('chatRoom').value.trim()||'narxy-global';
+  const nick=document.getElementById('chatNick').value.trim()||('User'+Math.floor(Math.random()*9000+1000));
+  chat.room=room;chat.nick=nick;
+  document.getElementById('chatLog').innerHTML='';
+  document.getElementById('chatStatus').textContent=`Connecting to "${room}"…`;
+  document.getElementById('chatStatus').classList.remove('on');
+  if(chat.client){try{chat.client.end()}catch(e){}chat.client=null}
+  const s=document.createElement('script');
+  s.src='https://unpkg.com/mqtt/dist/mqtt.min.js';
+  s.onload=()=>{
+    chat.client=mqtt.connect('wss://broker.emqx.io:8084/mqtt',{clientId:chatId});
+    chat.client.on('connect',()=>{
+      chat.client.subscribe('narxy/chat/'+room);
+      const st=document.getElementById('chatStatus');
+      st.textContent=`Connected · room: ${room} · you are ${nick}`;
+      st.classList.add('on');
+      document.getElementById('chatInput').disabled=false;
+      document.getElementById('chatSend').disabled=false;
+      addMsg('sys',null,`You joined as ${nick}`);
+      chat.client.publish('narxy/chat/'+room,JSON.stringify({t:'join',id:chatId,nick}));
+    });
+    chat.client.on('message',(topic,payload)=>{
+      try{const m=JSON.parse(payload.toString());if(m.id===chatId)return;
+        if(m.t==='join')addMsg('sys',null,`${m.nick} joined`);
+        else if(m.t==='leave')addMsg('sys',null,`${m.nick} left`);
+        else if(m.t==='msg')addMsg('other',m.nick,m.text);
+      }catch(e){}
+    });
+  };
+  document.head.appendChild(s);
+  window.addEventListener('beforeunload',()=>{if(chat.client)chat.client.publish('narxy/chat/'+room,JSON.stringify({t:'leave',id:chatId,nick}))},{once:true});
+}
+function sendChat(){
+  const inp=document.getElementById('chatInput');const t=inp.value.trim();
+  if(!t||!chat.client)return;
+  inp.value='';addMsg('self',chat.nick,t);
+  chat.client.publish('narxy/chat/'+chat.room,JSON.stringify({t:'msg',id:chatId,nick:chat.nick,text:t}));
+}
+function addMsg(kind,who,text){
+  const log=document.getElementById('chatLog');const d=document.createElement('div');
+  d.className='msg '+kind;
+  if(kind==='sys')d.textContent='— '+text+' —';
+  else d.innerHTML=`<div class="who">${escapeHtml(who||'')}</div>${escapeHtml(text)}`;
+  log.appendChild(d);log.scrollTop=log.scrollHeight;
+}
+
+/* ==========================================================
+   AI
+   ========================================================== */
+function openAI(){document.getElementById('aiModal').classList.add('on');setTimeout(()=>document.getElementById('aiInput').focus(),100)}
+function closeAI(){document.getElementById('aiModal').classList.remove('on')}
+async function sendAI(){
+  const inp=document.getElementById('aiInput');const msg=inp.value.trim();if(!msg)return;
+  inp.value='';const log=document.getElementById('aiLog');
+  log.innerHTML+=`<div class="ai-msg user">${escapeHtml(msg)}</div>`;
+  log.scrollTop=log.scrollHeight;
+  const tp=document.createElement('div');tp.className='ai-msg bot typing';tp.innerHTML='<span></span><span></span><span></span>';
+  log.appendChild(tp);log.scrollTop=log.scrollHeight;
+  document.getElementById('aiSend').disabled=true;
+  try{
+    const r=await fetch(`${CFG.AI}${encodeURIComponent(msg)}?model=openai`);
+    const t=await r.text();tp.remove();
+    log.innerHTML+=`<div class="ai-msg bot">${escapeHtml(t)}</div>`;
+  }catch(e){tp.remove();log.innerHTML+='<div class="ai-msg bot">Couldn\'t reach AI.</div>'}
+  document.getElementById('aiSend').disabled=false;log.scrollTop=log.scrollHeight;
+}
+
+/* ==========================================================
+   ACCOUNT
+   ========================================================== */
+function openAccount(){
+  document.getElementById('accountBody').innerHTML=`<div style="padding:20px;">
+    <div class="set-group"><div class="set-label">Local profile</div><div class="set-desc" style="margin-top:0;margin-bottom:12px;">Stored only in this browser.</div>
+    <input class="text-input" id="accNick" placeholder="Display name" value="${escapeAttr(localStorage.getItem('narxy_nick')||'')}">
+    <button class="btn btn-secondary" onclick="saveAccount()">Save</button></div>
+    <div class="set-group"><div class="set-label">Data</div><button class="btn btn-danger" onclick="clearAll()">Clear all data</button></div>
+  </div>`;
+  document.getElementById('accountModal').classList.add('on');
+}
+function closeAccount(){document.getElementById('accountModal').classList.remove('on')}
+function saveAccount(){localStorage.setItem('narxy_nick',document.getElementById('accNick').value.trim());toast('Saved')}
+function clearAll(){if(confirm('Clear all local data?')){localStorage.clear();toast('Cleared');closeAccount();location.reload()}}
+
+/* ==========================================================
+   DRAWER
+   ========================================================== */
+function openDrawer(w){if(w==='settings')renderDrawer();document.getElementById('drawer').classList.add('on');document.getElementById('backdrop').classList.add('on')}
+function closeDrawer(){document.getElementById('drawer').classList.remove('on');document.getElementById('backdrop').classList.remove('on')}
+function renderDrawer(){
+  document.getElementById('drawerTitle').textContent='Settings';
+  const working=getWorkingProvider();
+  const wname=working?(PROVIDERS.find(p=>p.id===working)||{}).name:'Auto-detect';
+  document.getElementById('drawerBody').innerHTML=`
+    <div class="set-group"><div class="set-label">Theme</div><div class="theme-row" id="themeRow"></div></div>
+    <div class="set-group">
+      <div class="set-label">TV Source</div>
+      <div class="set-desc" style="margin-top:0;">Currently using <b style="color:var(--accent-2)">${escapeHtml(wname||'Auto-detect')}</b>. Each source is tested through a proxy before use.</div>
+      <button class="btn btn-secondary" onclick="clearProvider()">Reset source</button>
+    </div>
+    <div class="set-group">
+      <div class="set-label">Tab cloaking</div>
+      <div class="switch-row"><div class="txt">Auto-cloak on tab switch<small>Rename tab when you switch away</small></div><div class="switch ${settings.autoCloak?'on':''}" onclick="tgl('autoCloak',this)"></div></div>
+      <div class="switch-row"><div class="txt">Auto-cloak on load<small>Start cloaked every time</small></div><div class="switch ${settings.cloakOnLoad?'on':''}" onclick="tgl('cloakOnLoad',this)"></div></div>
+      <div style="margin-top:10px;"><div class="set-label" style="text-transform:none;font-size:.72rem;">Cloak tab title</div><input class="text-input" value="${escapeAttr(settings.cloakTitle)}" onchange="setSetting('cloakTitle',this.value)"></div>
+      <div style="margin-top:12px;"><div class="set-label" style="text-transform:none;font-size:.72rem;">Cloak favicon</div><div class="favicon-row" id="favRow"></div></div>
+    </div>
+    <div class="set-group"><div class="set-label">Panic key</div>
+      <select class="text-input" onchange="setSetting('panicKey',this.value)">
+        <option value="Escape" ${settings.panicKey==='Escape'?'selected':''}>Escape</option>
+        <option value="\`" ${settings.panicKey==='`'?'selected':''}>Backtick</option>
+        <option value="~" ${settings.panicKey==='~'?'selected':''}>Tilde</option>
+        <option value="q" ${settings.panicKey==='q'?'selected':''}>Shift+Q</option>
+        <option value="x" ${settings.panicKey==='x'?'selected':''}>Shift+X</option>
+      </select>
+    </div>
+    <div class="set-group"><button class="btn btn-secondary" onclick="toggleCloak()">Toggle cloak now</button><button class="btn btn-danger" onclick="resetAll()">Reset all settings</button></div>
+  `;
+  refreshThemePicker();refreshFavPicker();
+}
+function clearProvider(){try{localStorage.removeItem('narxy_provider')}catch(e){}toast('Cleared');renderDrawer();renderSubnav()}
+function refreshThemePicker(){
+  const r=document.getElementById('themeRow');if(!r)return;
+  r.innerHTML=THEMES.map(t=>`<div class="theme-opt ${t.id===settings.theme?'active':''}" onclick="setSetting('theme','${t.id}')"><div class="theme-dot" style="background:linear-gradient(135deg,${t.bg},${t.accent})"></div><div class="theme-name">${t.name}</div></div>`).join('');
+}
+function refreshFavPicker(){
+  const r=document.getElementById('favRow');if(!r)return;
+  const keys=['classroom','google','docs','drive','gmail','chalk','book'];
+  r.innerHTML=keys.map(k=>`<button class="favicon-opt ${settings.cloakFavicon===k?'active':''}" onclick="setSetting('cloakFavicon','${k}')"><img src="${ICONS[k]}" alt="${k}"></button>`).join('');
+}
+function tgl(k,el){settings[k]=!settings[k];saveSettings();applySettings();el.classList.toggle('on',settings[k]);if(k==='cloakOnLoad'&&settings[k])toggleCloak()}
+
+/* ==========================================================
+   SEARCH PALETTE
+   ========================================================== */
+let cmdkSel=0;
+function openCmdk(){document.getElementById('cmdk').classList.add('on');const i=document.getElementById('cmdkInput');i.value='';i.focus();renderCmdk('')}
+function closeCmdk(){document.getElementById('cmdk').classList.remove('on')}
+function renderCmdk(q){
+  const box=document.getElementById('cmdkResults');const sections=[];const ql=q.toLowerCase();
+  const navs=[{label:'Games',sec:'games'},{label:'Cloud Gaming',sec:'cloud'},{label:'TV Shows & Movies',sec:'movies'},{label:'Music',sec:'music'},{label:'YouTube',sec:'youtube'},{label:'Chat',sec:'chat'}].filter(n=>!q||n.label.toLowerCase().includes(ql));
+  if(navs.length)sections.push({title:'Navigate',items:navs.map(n=>({label:n.label,hint:'Section',icon:'<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>',action:()=>{switchSection(n.sec);closeCmdk()}}))});
+  if(ql){
+    const g=allGames.filter(x=>x.name.toLowerCase().includes(ql)).slice(0,5);
+    if(g.length)sections.push({title:'Games',items:g.map(x=>({label:x.name,hint:x.category,icon:'<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="3"/></svg>',action:()=>{openGameByName(x.name);closeCmdk()}}))});
+    const cg=CLOUD_GAMES.filter(x=>x[0].toLowerCase().includes(ql)).slice(0,5);
+    if(cg.length)sections.push({title:'Cloud Games',items:cg.map(x=>({label:x[0],hint:'RaccoonGame',icon:'<svg viewBox="0 0 24 24"><path d="M6 16a4 4 0 0 1 .5-7.9A6 6 0 0 1 18 9a4 4 0 0 1 .5 7.9H6z"/></svg>',action:()=>{switchSection('cloud');launchCloud(x[1]);closeCmdk()}}))});
+  }
+  const acts=[{label:'Narxy AI',hint:'Ask a question',action:()=>{closeCmdk();openAI()}},{label:'Settings',hint:'Themes, cloak, panic key',action:()=>{closeCmdk();openDrawer('settings')}},{label:'Toggle cloak',hint:'Hide this tab',action:()=>{closeCmdk();toggleCloak()}}].filter(a=>!q||a.label.toLowerCase().includes(ql));
+  if(acts.length)sections.push({title:'Actions',items:acts.map(a=>({label:a.label,hint:a.hint,icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>',action:a.action}))});
+  if(q)sections.push({title:'Search for',items:[
+    {label:q,hint:'TV Shows & Movies',icon:'<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>',action:()=>{closeCmdk();switchSection('movies');setTimeout(()=>searchMovies(q),100)}},
+    {label:q,hint:'Music',icon:'<svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/></svg>',action:()=>{closeCmdk();switchSection('music');setTimeout(()=>searchMusic(q),100)}},
+    {label:q,hint:'Ask AI',icon:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/></svg>',action:()=>{closeCmdk();openAI();setTimeout(()=>{document.getElementById('aiInput').value=q;sendAI()},150)}}
+  ]});
+  cmdkSel=0;const flat=[];let html='';
+  sections.forEach(s=>{html+=`<div class="cmdk-section">${s.title}</div>`;s.items.forEach(it=>{const idx=flat.length;flat.push(it);html+=`<div class="cmdk-item ${idx===0?'sel':''}" data-idx="${idx}" onclick="cmdkRun(${idx})">${it.icon}<div class="label">${escapeHtml(it.label)}</div><div class="hint">${escapeHtml(it.hint||'')}</div></div>`})});
+  box.innerHTML=html||'<div class="empty"><p>No results</p></div>';window._cmdItems=flat;
+}
+function cmdkRun(i){const it=window._cmdItems?.[i];if(it)it.action()}
+document.getElementById('cmdkInput').addEventListener('input',e=>renderCmdk(e.target.value));
+document.getElementById('cmdkInput').addEventListener('keydown',e=>{
+  const items=window._cmdItems||[];if(!items.length)return;
+  if(e.key==='ArrowDown'){e.preventDefault();cmdkSel=Math.min(items.length-1,cmdkSel+1);document.querySelectorAll('.cmdk-item').forEach(el=>el.classList.toggle('sel',+el.dataset.idx===cmdkSel))}
+  else if(e.key==='ArrowUp'){e.preventDefault();cmdkSel=Math.max(0,cmdkSel-1);document.querySelectorAll('.cmdk-item').forEach(el=>el.classList.toggle('sel',+el.dataset.idx===cmdkSel))}
+  else if(e.key==='Enter'){e.preventDefault();cmdkRun(cmdkSel)}
+});
+
+/* ==========================================================
+   HELPERS
+   ========================================================== */
+let toastT;
+function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),2200)}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function escapeAttr(s){return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;')}
+
+/* ==========================================================
+   BOOT
+   ========================================================== */
+loadSettings();
+loadAllGames();
+renderCloud();
+renderSubnav();
+if(settings.cloakOnLoad)setTimeout(toggleCloak,200);
+setTimeout(()=>toast('Press ⌘K to search everything'),1200);
+</script>
+</body>
+</html>
