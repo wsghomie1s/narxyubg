@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>ASHEN OATH — A 3D Action RPG</title>
+<style>
+:root{--gold:#e9b96e;--ink:#0a0d12;--panel:rgba(10,14,20,.88);--red:#e65d56;--cyan:#85d9d0}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080b10;color:#f5eee3;font-family:Georgia,"Times New Roman",serif}canvas{display:block}
+#hud{position:fixed;inset:0;pointer-events:none;text-shadow:0 2px 5px #000}
+#brand{position:absolute;top:20px;left:24px;font-size:12px;letter-spacing:5px;color:#c7b69c}
+#chapter{position:absolute;top:43px;left:24px;font-size:20px;letter-spacing:2px}
+#bars{position:absolute;left:24px;bottom:26px;width:min(330px,42vw)}
+.barlabel{font:10px Arial,sans-serif;letter-spacing:2px;color:#d7c8b2;margin:7px 0 4px}.bar{height:9px;background:#20242a;border:1px solid #555;clip-path:polygon(0 0,100% 0,98% 100%,0 100%)}.fill{height:100%;width:100%;transition:width .12s}.hp{background:linear-gradient(90deg,#8d2528,#ef685b)}.stam{background:linear-gradient(90deg,#a97835,#f0cc83)}.rage{background:linear-gradient(90deg,#287e87,#9be4d9)}
+#quest{position:absolute;right:25px;top:26px;text-align:right;max-width:310px}.eyebrow{font:10px Arial,sans-serif;letter-spacing:2px;color:var(--gold)}#objective{font-size:16px;margin-top:6px;line-height:1.4}
+#bossHud{position:absolute;left:50%;top:22px;transform:translateX(-50%);width:min(440px,70vw);text-align:center;display:none}#bossName{letter-spacing:3px;font-size:15px;margin-bottom:8px}.bossbar{height:10px;background:#292124;border:1px solid #80605a}.bossfill{height:100%;width:100%;background:linear-gradient(90deg,#8d202c,#e45a51)}
+#prompt{position:absolute;left:50%;bottom:19%;transform:translateX(-50%);font:12px Arial,sans-serif;letter-spacing:1px;background:#0a0d12cc;border:1px solid #b18d5a;padding:10px 16px;display:none}
+#toast{position:absolute;top:24%;left:50%;transform:translate(-50%,-50%);font-size:clamp(18px,3vw,30px);letter-spacing:3px;text-align:center;opacity:0;transition:opacity .4s;color:#f3d8a6}
+#subtitles{position:absolute;bottom:11%;left:50%;transform:translateX(-50%);width:min(760px,86vw);text-align:center;font-size:clamp(14px,2vw,19px);line-height:1.5;text-shadow:0 2px 6px #000}
+#speaker{font:10px Arial,sans-serif;letter-spacing:3px;color:var(--gold);margin-bottom:5px}
+#help{position:absolute;right:22px;bottom:22px;text-align:right;font:11px/1.7 Arial,sans-serif;color:#d5d1c8;opacity:.85}
+#overlay{position:fixed;inset:0;background:radial-gradient(ellipse at center,#20242b99,#07090df2 75%);display:flex;align-items:center;justify-content:center;z-index:5}
+.panel{width:min(600px,92vw);padding:clamp(22px,5vw,48px);border:1px solid #8f744e;background:linear-gradient(145deg,#15191fef,#080b10f7);box-shadow:0 20px 80px #000;max-height:92vh;overflow:auto}
+.kicker{font:10px Arial,sans-serif;letter-spacing:5px;color:var(--gold)}h1{font-size:clamp(40px,9vw,74px);line-height:.9;letter-spacing:3px;font-weight:normal;margin:18px 0 12px}h1 span{color:var(--gold)}.desc{color:#c8c1b6;line-height:1.6;font-size:15px;max-width:480px}
+button,select{font:12px Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;color:#f5eee3;background:#252a31;border:1px solid #7e694e;padding:13px 18px;cursor:pointer;margin:7px 7px 0 0}button:hover{background:#59452e}button.primary{background:#a47740;color:#090b0f;border-color:#e7c38b;font-weight:bold}button:disabled{opacity:.35;cursor:not-allowed}.menurow{display:flex;flex-wrap:wrap;margin-top:22px}.small{font:11px/1.7 Arial,sans-serif;color:#aaa69e;margin-top:20px}.hidden{display:none!important}
+#mobile{position:fixed;inset:0;pointer-events:none;display:none;z-index:3;font:12px Arial,sans-serif} .pad{position:absolute;bottom:22px;left:20px;width:132px;height:132px;border:1px solid #ffffff55;border-radius:50%;background:#151a2055;pointer-events:auto;touch-action:none}.nub{position:absolute;left:42px;top:42px;width:46px;height:46px;border-radius:50%;background:#d6bd8a99;border:1px solid #fff8}.actions{position:absolute;right:16px;bottom:20px;width:180px;height:150px;pointer-events:auto}.act{position:absolute;border-radius:50%;width:54px;height:54px;padding:0;margin:0;letter-spacing:0;background:#1b2029dd;border:1px solid #d4b77d;color:#fff;font-size:10px;touch-action:none}.act[data-a="light"]{right:64px;bottom:0}.act[data-a="heavy"]{right:0;bottom:48px}.act[data-a="dodge"]{right:64px;bottom:96px}.act[data-a="block"]{right:124px;bottom:48px}
+@media(max-width:700px){#help{display:none}#mobile{display:block}#bars{bottom:165px;width:48vw}#quest{top:15px;right:12px;max-width:42vw}#brand{top:14px;left:12px}#chapter{top:35px;left:12px;font-size:15px}#subtitles{bottom:25%;}}
+
+#combatMeta{position:absolute;left:24px;top:76px;display:flex;flex-direction:column;gap:5px;font:10px Arial,sans-serif;letter-spacing:2px;color:#d7c8b2}
+#comboLabel{color:#f0c17b;font-weight:bold}#regionLabel{color:#8bb9b5;font-size:9px;letter-spacing:1.5px}
+#bossPostureWrap{height:4px;background:#282c31;margin-top:5px;border:1px solid #6e6257}#bossPosture{height:100%;width:0;background:#e8c477}
+#stanceLabel{color:#f0c17b}
+#damageLayer{position:fixed;inset:0;pointer-events:none;z-index:2}
+#mapCard{position:fixed;right:22px;bottom:100px;width:220px;padding:12px;background:#080b10dd;border:1px solid #b18d5a;font:10px/1.7 Arial,sans-serif;display:none;z-index:4}
+#mapCard strong{color:#f0c17b;letter-spacing:2px}
+#combatTip{position:absolute;left:50%;top:18%;transform:translateX(-50%);font:11px Arial,sans-serif;letter-spacing:2px;color:#f5d9a4;background:#111820c9;padding:8px 13px;border:1px solid #8b704a;opacity:0;transition:opacity .2s}
+#allyStatus{position:absolute;left:24px;bottom:125px;font:10px Arial,sans-serif;letter-spacing:1.5px;color:#9dd8cd}
+#bars .bar{overflow:hidden}
+@media(max-width:700px){#combatMeta{top:67px;left:12px;font-size:8px}#allyStatus{left:12px;bottom:280px}#mapCard{right:10px;bottom:180px;width:180px}}
+
+</style>
+</head>
+<body>
+<div id="hud">
+  <div id="brand">A GAME OF ASH & MEMORY</div><div id="chapter">ASHEN OATH</div>
+  <div id="quest"><div class="eyebrow">CURRENT OATH</div><div id="objective">Find the bell beneath the drowned chapel.</div></div>
+  <div id="bossHud"><div id="bossName">THE HOLLOW WARDEN</div><div class="bossbar"><div class="bossfill" id="bossFill"></div></div><div id="bossPostureWrap"><div id="bossPosture"></div></div></div>
+  <div id="combatMeta"><span id="stanceLabel">STANCE · WAYFARER</span><span id="comboLabel"></span><span id="regionLabel">THE DROWNED CAUSEWAY</span></div><div id="bars"><div class="barlabel">VITALITY</div><div class="bar"><div class="fill hp" id="hpFill"></div></div><div class="barlabel">VIGOR</div><div class="bar"><div class="fill stam" id="stamFill"></div></div><div class="barlabel">EMBER</div><div class="bar"><div class="fill rage" id="rageFill"></div></div></div>
+  <div id="prompt">[E] INTERACT</div><div id="combatTip"></div><div id="allyStatus">MARA · READY</div><div id="mapCard"><strong>FIELD MAP</strong><div id="mapContent">Drowned Causeway<br>Chapel Bell<br>Ash Altar</div></div><div id="damageLayer"></div><div id="toast"></div><div id="subtitles"><div id="speaker"></div><div id="line"></div></div>
+  <div id="help">WASD move · mouse look<br>left click light · right click heavy<br>space dodge · Q guard/parry · R ranged<br>F ultimate · E interact · Tab lock-on<br>1/2 weapon · 3 stance · C companion<br>V stealth · J skills · M map · Esc pause</div>
+</div>
+<div id="mobile"><div class="pad" id="pad"><div class="nub" id="nub"></div></div><div class="actions"><button class="act" data-a="light">HIT</button><button class="act" data-a="heavy">HEAVY</button><button class="act" data-a="dodge">DODGE</button><button class="act" data-a="block">GUARD</button><button class="act" data-a="ranged" style="right:0;bottom:0;transform:translateY(-100%)">RANGE</button><button class="act" data-a="special" style="right:124px;bottom:0">EMBER</button></div></div>
+<div id="overlay"><div class="panel" id="menu">
+  <div class="kicker">AN ORIGINAL DARK FANTASY ACTION RPG</div><h1>ASHEN<br><span>OATH</span></h1>
+  <p class="desc">The dead have forgotten their names. The living have forgotten their debts. Master three combat stances, break five ancient guardians, explore memory shrines, command Mara in combat, and decide what a world is allowed to remember.</p>
+  <div class="menurow"><button class="primary" id="newGame">Begin the Oath</button><button id="continueGame">Continue</button><button id="settings">Settings</button></div>
+  <div class="small">expanded single-file browser RPG · keyboard/mouse, touch, and gamepad controls<br>three stances · five boss guardians · skill tree · side oaths · local saves</div>
+</div></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+const $=s=>document.querySelector(s);
+const overlay=$('#overlay'), menu=$('#menu');
+let scene,camera,renderer,clock,player,weapon,weapon2,activeWeapon=0,world=[],enemies=[],projectiles=[],particles=[],interactables=[],decor=[],keys={},mouse={x:0,y:0},gameStarted=false,paused=true,lockTarget=null,dialogueTimer=0,dialogueQueue=[],lastBark=0,toastTimer=0,shake=0;
+const state={hp:100,maxHp:100,stam:100,maxStam:100,rage:0,xp:0,level:1,coins:0,chapter:0,weaponLevel:1,skill:0,checkpoint:0,bosses:[],quest:0,flags:{},difficulty:'normal',sound:true,voice:true,damageNumbers:false,mouseSensitivity:1,dead:false};
+const mat=(c,rough=.8,metal=0)=>new THREE.MeshStandardMaterial({color:c,roughness:rough,metalness:metal});
+const mats={ground:mat('#343c3b'),stone:mat('#535a58'),darkstone:mat('#292f34'),moss:mat('#394d42'),gold:mat('#b18a50',.4,.5),player:mat('#b8b4a6'),cloth:mat('#303c47'),red:mat('#8f3338'),enemy:mat('#5a6265'),bone:mat('#d1c8b2'),ember:mat('#ed8b49',.4),water:mat('#1c4247',.3,.25),glow:mat('#7ed9d0',.3,.1),wood:mat('#55402f')};
+function box(w,h,d,material,x,y,z,parent=scene){let m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+function sphere(r,material,x,y,z,parent=scene){let m=new THREE.Mesh(new THREE.SphereGeometry(r,14,10),material);m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m}
+function cylinder(rt,rb,h,material,x,y,z,parent=scene,seg=12){let m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+function group(){return new THREE.Group()}
+function say(speaker,line,dur=4){dialogueQueue.push({speaker,line,dur})}
+function nextLine(){if(dialogueTimer>0||!dialogueQueue.length)return;const d=dialogueQueue.shift();$('#speaker').textContent=d.speaker.toUpperCase();$('#line').textContent=d.line;dialogueTimer=d.dur; if(state.sound) tone(300+Math.random()*100,.08,'sine',.025)}
+function announce(t){$('#toast').textContent=t;$('#toast').style.opacity=1;toastTimer=2.8}
+function tone(freq,dur=.12,type='triangle',vol=.035){if(!state.sound)return;try{const ctx=audioCtx();let o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=freq;g.gain.value=vol;g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+dur);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+dur)}catch{}}
+let ac;function audioCtx(){if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();return ac}
+function sfx(kind){({hit:()=>tone(100,.09,'sawtooth',.07),parry:()=>{tone(720,.08,'triangle',.05);tone(940,.1,'sine',.03)},dodge:()=>tone(180,.1,'sine',.035),heavy:()=>tone(75,.18,'sawtooth',.06),magic:()=>tone(440,.24,'sine',.045),hurt:()=>tone(65,.18,'square',.04),win:()=>{tone(440,.2);setTimeout(()=>tone(660,.3),150)}}[kind]||(()=>{}))()}
+function makeHumanoid({x=0,z=0,scale=1,boss=false,ally=false,type='melee'}={}){
+ const g=group();g.position.set(x,0,z);g.scale.setScalar(scale);
+ const bodymat=boss?mat('#3c3439',.55,.25):ally?mats.cloth:mat(type==='ranged'?'#5d536a':type==='shield'?'#4d5b58':type==='fast'?'#716044':'#565c5e');
+ const head=sphere(boss?.55:.32,boss?mats.bone:bodymat,0,1.8,0,g);
+ cylinder(.42,.5,.9,bodymat,0,1.15,0,g);
+ const limbmat=boss?mats.darkstone:bodymat;
+ for(const side of [-1,1]){
+   cylinder(.13,.16,.8,limbmat,side*.52,1.15,0,g).rotation.z=side*.12;
+   cylinder(.17,.19,.78,limbmat,side*.22,.43,0,g).rotation.z=-side*.08;
+ }
+ if(boss){for(let i=0;i<3;i++){let horn=cylinder(.03,.15,.55,mats.bone,(i-1)*.34,2.3,-.08,g);horn.rotation.z=(i-1)*-.48} sphere(.1,mats.ember,-.18,1.86,.29,g);sphere(.1,mats.ember,.18,1.86,.29,g);cylinder(.1,.18,1.8,mats.darkstone,.72,1.15,0,g).rotation.z=-.4}
+ else {sphere(.06,mats.ember,-.12,1.83,.28,g);sphere(.06,mats.ember,.12,1.83,.28,g)}
+ if(type==='shield'){box(.75,1,.18,mats.darkstone,-.65,1.1,.16,g);sphere(.12,mats.gold,-.65,1.1,.27,g)}
+ if(type==='ranged'){let bow=cylinder(.035,.035,1.2,mats.wood,.7,1.3,.1,g);bow.rotation.z=.5}
+ if(type==='fast'){cylinder(.07,.09,.8,mats.gold,.65,1.1,0,g).rotation.z=-.8}
+ g.userData={head,bodymat};scene.add(g);return g;
+}
+function createPlayer(){
+ const g=group();g.position.set(0,0,5);
+ const body=makeHumanoid({ally:true});scene.remove(body);g.add(body);body.position.y=0;body.scale.setScalar(.92);
+ // replace friendly palette with distinct cloak and iron shoulder pieces
+ box(.95,.22,.55,mats.darkstone,-.35,1.55,0,g);box(.95,.22,.55,mats.darkstone,.35,1.55,0,g);
+ const cloak= new THREE.Mesh(new THREE.ConeGeometry(.62,1.25,5),mats.cloth);cloak.position.set(0,1.1,-.3);cloak.rotation.x=-.18;cloak.castShadow=true;g.add(cloak);
+ const blade=group();blade.position.set(.62,1.15,.12);blade.rotation.z=-.45;g.add(blade);box(.1,1.25,.1,mats.gold,0,0,0,blade);
+ return g;
+}
+function createHero(){
+ const g=group();g.position.set(0,0,7);
+ const torso=cylinder(.34,.48,.9,mats.player,0,1.2,0,g);torso.rotation.z=0;
+ const tunic=box(.65,.72,.38,mats.cloth,0,1.17,.02,g);
+ sphere(.29,mats.player,0,1.88,.02,g);
+ for(const s of [-1,1]){
+  cylinder(.12,.16,.76,mats.darkstone,s*.46,1.15,0,g).rotation.z=s*.12;
+  cylinder(.16,.2,.72,mats.cloth,s*.2,.42,0,g).rotation.z=-s*.04;
+  box(.3,.15,.35,mats.gold,s*.44,1.49,.02,g);
+ }
+ const cloak=new THREE.Mesh(new THREE.ConeGeometry(.52,1.15,5),mats.red);cloak.position.set(0,1.03,-.25);cloak.rotation.x=-.2;g.add(cloak);
+ sphere(.055,mats.glow,-.11,1.9,.28,g);sphere(.055,mats.glow,.11,1.9,.28,g);
+ const sword=group();sword.position.set(.53,1.1,.12);sword.rotation.z=-.5;g.add(sword);
+ box(.11,1.18,.12,mats.gold,0,.42,0,sword);box(.23,.12,.16,mats.wood,0,-.08,0,sword);
+ const axe=group();axe.position.set(-.55,1.1,.12);axe.rotation.z=.3;g.add(axe);
+ box(.09,1,.1,mats.wood,0,.35,0,axe);box(.48,.32,.12,mats.gold,.18,.72,0,axe);
+ g.userData={sword,axe,body:torso,attack:0,invuln:0,block:false,parry:0,vel:new THREE.Vector3(),lastAttack:0,combo:0,walk:0};return g;
+}
+function setup(){
+ scene=new THREE.Scene();scene.background=new THREE.Color('#10191e');scene.fog=new THREE.FogExp2('#10191e',.012);
+ camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,180);
+ renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;document.body.appendChild(renderer.domElement);
+ scene.add(new THREE.HemisphereLight('#b4c7ce','#25211c',2));
+ let sun=new THREE.DirectionalLight('#ffd9a0',3.2);sun.position.set(-12,22,9);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-35;sun.shadow.camera.right=35;sun.shadow.camera.top=35;sun.shadow.camera.bottom=-35;scene.add(sun);
+ clock=new THREE.Clock();buildWorld();player=createHero();scene.add(player);camera.position.set(0,4,13);updateHUD();window.addEventListener('resize',resize);renderer.domElement.addEventListener('click',()=>{if(gameStarted&&!paused&&document.pointerLockElement!==renderer.domElement&&innerWidth>750)renderer.domElement.requestPointerLock?.()});
+}
+function buildWorld(){
+ // connected ruined causeway with a flooded chapel, forest approach, bell arena, and high citadel
+ const floor=box(100,1,100,mats.ground,0,-.65,0);floor.receiveShadow=true;
+ // raised route platforms
+ box(10,.5,20,mats.stone,0,-.15,0);box(9,.5,12,mats.stone,0,-.1,-14);box(13,.5,13,mats.stone,0,-.1,-27);box(18,.6,18,mats.darkstone,0,-.05,-43);
+ // path edges / broken ruins
+ for(let z=-48;z<9;z+=5){for(let side of [-1,1]){if(Math.random()>.16){let h=2+Math.random()*4;let p=box(.7,h,.7,Math.random()>.5?mats.stone:mats.moss,side*(5.5+Math.random()*1.2),h/2-.1,z+Math.random()*2);p.rotation.z=(Math.random()-.5)*.14;}}}
+ // ruined arches
+ for(let z of [-11,-25,-39]){for(let s of [-1,1])box(.65,4,.7,mats.darkstone,s*3.6,1.8,z);box(7,.5,.7,mats.stone,0,3.8,z)}
+ // dead trees and rocks
+ for(let i=0;i<36;i++){let x=(Math.random()-.5)*34,z=-Math.random()*48+3;if(Math.abs(x)<6&&z>-31)continue;let h=2+Math.random()*4;cylinder(.12,.3,h,mats.wood,x,h/2-.1,z).rotation.z=(Math.random()-.5)*.3;for(let j=0;j<3;j++){let branch=cylinder(.04,.1,1.6,mats.wood,x+(Math.random()-.5),h*(.5+j*.12),z);branch.rotation.z=(Math.random()-.5)*1.5}}
+ // water basins
+ for(let x of [-11,11]){let w=box(8,.12,30,mats.water,x,-.35,-20);w.material.transparent=true;w.material.opacity=.78}
+ // chapel silhouette and bell
+ for(let x of [-2.6,2.6]){box(.45,5,.55,mats.darkstone,x,2.1,-26);let roof=cylinder(0,2.5,2,mats.stone,x,5.3,-26,scene,4);roof.rotation.y=Math.PI/4}
+ box(4,.45,4,mats.wood,0,1,-26);cylinder(.8,.8,1.3,mats.gold,0,1.85,-26);
+ const bell=sphere(.62,mats.gold,0,2.5,-26);bell.scale.set(.75,1, .75);
+ // high citadel pillars and altar
+ for(let i=0;i<8;i++){let a=i*Math.PI/4;let p=box(.65,5,.65,mats.stone,Math.cos(a)*7,2.2,-43+Math.sin(a)*7);p.rotation.y=-a}
+ cylinder(2.8,3.2,.5,mats.darkstone,0,.5,-43);cylinder(.9,1.2,1.3,mats.gold,0,1.35,-43);
+ // chests and lore
+ makeChest(-3.5,0,-8,'Supply cache');makeChest(4,0,-19,'The ferryman’s ledger');makeChest(-4,0,-34,'Cinder reliquary');
+ makeInteract(0,0,-26,'Ring the drowned bell',()=>{if(state.quest<1){state.quest=1;$('#objective').textContent='Cross the causeway. The Warden has awakened.';announce('THE BELL REMEMBERS');say('MARA','That bell was buried before my grandmother was born. Who rang it?');say('ORIN','Someone who wanted the dead to look this way. Keep moving.');spawnEnemy('boss',0,-36);saveGame()}});
+ makeInteract(0,0,-43,'Touch the ash altar',()=>{if(state.quest>=2){tip('THE NEXT OATH WAITS BEYOND THE ALTAR');}else{say('ALTAR','The stone is cold. Something still guards the road.');}});
+ // decorative landmarks
+ for(let i=0;i<12;i++){let x=(Math.random()-.5)*20,z=-8-Math.random()*35;let rock=sphere(.45+Math.random()*.5,mats.darkstone,x,.1,z);rock.scale.set(1,.65,1.4)}
+}
+function makeChest(x,y,z,name){let c=group();c.position.set(x,.15,z);box(.9,.55,.65,mats.wood,0,.3,0,c);box(.95,.12,.68,mats.gold,0,.6,0,c);box(.14,.22,.08,mats.gold,0,.43,.36,c);scene.add(c);makeInteract(x,y,z,'Open '+name,()=>{if(c.userData.open)return;c.userData.open=true;c.rotation.x=-.2;state.coins+=15;state.xp+=30;state.hp=Math.min(state.maxHp,state.hp+25);state.rage=Math.min(100,state.rage+20);announce('RELIC FOUND  +30 XP');say('MARA',name==='The ferryman’s ledger'?'Names. Hundreds of them. Someone kept a record of everyone the river took.':'There’s still warmth in this. Whoever left it believed someone would come.');updateHUD();saveGame();});}
+function makeInteract(x,y,z,label,fn){const o={x,y,z,label,fn,used:false};interactables.push(o);return o}
+function baseSpawnEnemy(type,x,z){
+ const boss=type==='boss';const e={id:Math.random(),type,boss,mesh:makeHumanoid({x,z,scale:boss?1.65:1,boss,type:boss?'melee':type}),x,z,hp:boss?480:type==='heavy'?150:80,maxHp:boss?480:type==='heavy'?150:80,alive:true,attackCd:1.2,stun:0,phase:0,windup:0,hitFlash:0,stagger:0,moveSeed:Math.random()*10,range:type==='ranged'?8:2.1,damage:boss?18:type==='heavy'?17:10,guard:type==='shield'?0.55:0,side:Math.random()<.5?-1:1};
+ e.mesh.userData.enemy=e;enemies.push(e);if(boss){$('#bossHud').style.display='block';$('#bossName').textContent='THE HOLLOW WARDEN';announce('THE HOLLOW WARDEN');say('WARDEN','You rang the bell. Now every forgotten thing knows your name.');say('ORIN','Then let them come learn it properly.');}return e;
+}
+function spawnWave(){if(state.quest===1&&!enemies.some(e=>e.alive)){state.quest=2;$('#objective').textContent='Reach the ash altar beyond the Warden.';announce('THE CAUSEWAY IS QUIET');say('MARA','It stopped moving. Is it dead?');say('ORIN','No. But it has remembered pain. That will do for now.');state.xp+=180;state.coins+=50;state.bosses.push('warden');state.rage=100;saveGame();}}
+function resize(){if(!renderer)return;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}
+function updateBaseHUD(){$('#hpFill').style.width=(state.hp/state.maxHp*100)+'%';$('#stamFill').style.width=(state.stam/state.maxStam*100)+'%';$('#rageFill').style.width=state.rage+'%';let b=enemies.find(e=>e.boss&&e.alive);if(b)$('#bossFill').style.width=(b.hp/b.maxHp*100)+'%';}
+function baseDamageEnemy(e,d,heavy=false){if(!e.alive)return;e.hp-=d;e.stagger+=heavy?30:12;e.hitFlash=.14;sfx(heavy?'heavy':'hit');spawnBurst(e.mesh.position.clone().add(new THREE.Vector3(0,1,0)),heavy?'#e8b35d':'#e7e1d2',heavy?10:5);shake=Math.min(.2,shake+.035);if(e.hp<=0){e.alive=false;scene.remove(e.mesh);state.xp+=e.boss?250:20;state.coins+=e.boss?40:3;state.rage=Math.min(100,state.rage+(e.boss?35:8));if(e.boss){$('#bossHud').style.display='none';state.quest=1;state.flags.wardenDead=true;announce('THE WARDEN REMEMBERS');say('WARDEN','I was not guarding the bell. I was guarding the names beneath it.');say('MARA','Then we have to find them. All of them.');say('ORIN','One oath at a time.');}else if(Math.random()<.35)say('MARA','They’re not soldiers. They’re the things this kingdom chose to forget.');updateHUD();saveGame();}else if(e.stagger>100){e.stun=.65;e.stagger=0;}}
+function spawnBurst(pos,color,count){for(let i=0;i<count;i++){let m=sphere(.045,mat(color,.4),pos.x,pos.y,pos.z);let v=new THREE.Vector3((Math.random()-.5)*5,Math.random()*4,(Math.random()-.5)*5);particles.push({m,v,life:.35+Math.random()*.3});scene.add(m)}}
+function baseAttack(kind){if(paused||!player||state.dead||state.stam<8)return;let now=performance.now()/1000;if(now-player.userData.lastAttack< (kind==='heavy'?.52:.28))return;player.userData.lastAttack=now;player.userData.attack=kind==='heavy'?.38:.24;player.userData.combo=(player.userData.combo+1)%3;state.stam=Math.max(0,state.stam-(kind==='heavy'?22:9));if(kind==='heavy')sfx('heavy');else sfx('hit');const dir=new THREE.Vector3(Math.sin(player.rotation.y),0,Math.cos(player.rotation.y));let hits=0;
+ for(const e of enemies){if(!e.alive)continue;let ep=e.mesh.position.clone().sub(player.position);let dist=ep.length();ep.y=0;let dot=ep.normalize().dot(dir);if(dist<(kind==='heavy'?3.25:2.35)&&dot>(kind==='heavy'?-.05:.15)){let damage=(kind==='heavy'?38:20)+state.weaponLevel*3;if(e.guard&&kind!=='heavy'){damage*=1-e.guard;spawnBurst(e.mesh.position.clone().add(new THREE.Vector3(0,1,0)),'#9aa6a5',3)}damageEnemy(e,damage,kind==='heavy');hits++;}}
+ if(!hits){spawnBurst(player.position.clone().add(new THREE.Vector3(dir.x*1.4,1,dir.z*1.4)),kind==='heavy'?'#e8b35d':'#a9c8c5',3)}
+}
+function baseDodge(){if(paused||state.stam<18)return;state.stam-=18;player.userData.invuln=.48;let f=new THREE.Vector3(Math.sin(player.rotation.y),0,Math.cos(player.rotation.y));if(keys.KeyS)f.negate();if(keys.KeyA)f.set(-Math.cos(player.rotation.y),0,Math.sin(player.rotation.y));if(keys.KeyD)f.set(Math.cos(player.rotation.y),0,-Math.sin(player.rotation.y));player.position.addScaledVector(f,2.25);sfx('dodge');spawnBurst(player.position.clone().add(new THREE.Vector3(0,.6,0)),'#8bbdb6',5)}
+function baseGuard(){if(paused||state.stam<1)return;player.userData.block=true;player.userData.parry=.22;state.stam=Math.max(0,state.stam-.5)}
+function baseRanged(){if(paused||state.stam<12)return;state.stam-=12;sfx('magic');const d=new THREE.Vector3(Math.sin(player.rotation.y),.05,Math.cos(player.rotation.y)).normalize();let p=sphere(.16,mats.glow,player.position.x,1.4,player.position.z);projectiles.push({m:p,v:d.multiplyScalar(20),life:1.5,from:'player',damage:28});scene.add(p)}
+function baseSpecial(){if(paused||state.rage<100)return;state.rage=0;sfx('magic');announce('EMBER RECKONING');for(const e of enemies){if(e.alive&&e.mesh.position.distanceTo(player.position)<7)damageEnemy(e,95,true)}spawnBurst(player.position.clone().add(new THREE.Vector3(0,1,0)),'#e88b49',36);shake=.18;updateHUD()}
+function baseInteract(){let nearest=null,dist=2.7;for(const o of interactables){let d=Math.hypot(o.x-player.position.x,o.z-player.position.z);if(d<dist){nearest=o;dist=d}}if(nearest){nearest.fn();return}if(state.quest===0&&player.position.z<-22){say('ORIN','The bell is below the waterline. Find a way into the chapel.');}}
+function baseUpdatePlayer(dt){
+ const u=player.userData;u.invuln=Math.max(0,u.invuln-dt);u.parry=Math.max(0,u.parry-dt);u.attack=Math.max(0,u.attack-dt);state.stam=Math.min(state.maxStam,state.stam+dt*(u.block?4:17));
+ if(u.block){if(!keys.KeyQ&&!keys.ShiftLeft)u.block=false}
+ let mx=(keys.KeyD?1:0)-(keys.KeyA?1:0),mz=(keys.KeyW?1:0)-(keys.KeyS?1:0);
+ if(Math.abs(touchMove.x)+Math.abs(touchMove.y)>.1){mx=touchMove.x;mz=-touchMove.y}
+ const moving=Math.abs(mx)+Math.abs(mz)>.05;let forward=new THREE.Vector3(Math.sin(camera.rotation.y),0,Math.cos(camera.rotation.y));let right=new THREE.Vector3(forward.z,0,-forward.x);let dir=forward.multiplyScalar(mz).add(right.multiplyScalar(mx));if(dir.length()>1)dir.normalize();
+ if(moving&&!u.attack){player.position.addScaledVector(dir,dt*(keys.ShiftLeft?7.8:4.6));player.rotation.y=Math.atan2(dir.x,dir.z);u.walk+=dt*10;player.position.y=Math.abs(Math.sin(u.walk))*.035}
+ // movement bounds, pits and boundaries
+ player.position.x=THREE.MathUtils.clamp(player.position.x,-22,22);player.position.z=THREE.MathUtils.clamp(player.position.z,-126,12);
+ if(player.position.z<-31&&Math.abs(player.position.x)>21)player.position.x=Math.sign(player.position.x)*21;
+ if(player.position.z<-34&&state.quest<2)player.position.z=-34;
+ if(player.position.z<-40&&state.quest<2)player.position.z=-40;
+ // subtle weapon swing animation
+ u.sword.rotation.z=-.5+Math.sin(u.attack*18)*.8;u.axe.rotation.z=.3-Math.sin(u.attack*18)*.7;
+ // lock on faces target
+ if(lockTarget&&lockTarget.alive){const d=lockTarget.mesh.position.clone().sub(player.position);player.rotation.y=Math.atan2(d.x,d.z)}
+ // follow camera; mouse movement rotates camera
+ const target=player.position.clone().add(new THREE.Vector3(0,1.3,0));const yaw=camera.rotation.y;const desired=target.clone().add(new THREE.Vector3(-Math.sin(yaw)*8,4.1,-Math.cos(yaw)*8));camera.position.lerp(desired,1-Math.pow(.001,dt));camera.lookAt(target);
+}
+function baseUpdateEnemies(dt,t){
+ for(const e of enemies){if(!e.alive)continue;const m=e.mesh;const ep=player.position.clone().sub(m.position);const dist=ep.length();const flat=new THREE.Vector3(ep.x,0,ep.z);if(flat.lengthSq()>.001)m.rotation.y=Math.atan2(flat.x,flat.z);if(e.stun>0){e.stun-=dt;continue}
+ if(e.hitFlash>0){e.hitFlash-=dt;m.position.y=Math.sin(t*60)*.04}
+ e.attackCd-=dt;e.windup=Math.max(0,e.windup-dt);
+ if(e.boss&&e.hp<e.maxHp*.5)e.phase=1;
+ const speed=e.boss?(e.phase?2.4:1.7):e.type==='fast'?4.3:e.type==='heavy'?1.5:2.3;
+ if(dist>e.range*.82){m.position.addScaledVector(flat.normalize(),speed*dt);if(e.type==='fast'&&dist<5&&Math.sin(t*4+e.moveSeed)>.92)m.position.x+=e.side*.12}
+ else if(e.attackCd<=0&&e.windup<=0){e.windup=e.boss?.7:.5;e.attackCd=e.boss?(e.phase?1.45:2):e.type==='fast'?1.1:1.6;e.mesh.userData.lunge=true}
+ if(e.windup>0&&e.windup<dt*1.5){const d=player.position.distanceTo(m.position);if(d<(e.boss?3.6:2.2)){const u=player.userData;if(u.parry>0){e.stun=1.1;e.windup=0;e.stagger=0;sfx('parry');state.rage=Math.min(100,state.rage+18);spawnBurst(m.position.clone().add(new THREE.Vector3(0,1,0)),'#b6ece2',12);announce('PARRY');}else if(u.invuln<=0){let damage=e.damage*(u.block?.25:1);state.hp=Math.max(0,state.hp-damage);sfx('hurt');shake=.13;spawnBurst(player.position.clone().add(new THREE.Vector3(0,1,0)),'#c94c49',7);if(state.hp<=0)die();}}}
+ if(e.boss&&e.phase===1&&Math.random()<dt*.8){let p=sphere(.22,mats.ember,m.position.x,1.6,m.position.z);let v=player.position.clone().add(new THREE.Vector3(0,1,0)).sub(p.position).normalize().multiplyScalar(7);projectiles.push({m:p,v,life:3,from:'enemy',damage:12});scene.add(p)}
+ }
+ spawnWave();
+}
+function updateProjectiles(dt){for(let i=projectiles.length-1;i>=0;i--){let p=projectiles[i];p.life-=dt;p.m.position.addScaledVector(p.v,dt);if(p.from==='enemy'&&p.m.position.distanceTo(player.position.clone().add(new THREE.Vector3(0,1,0)))<.8&&player.userData.invuln<=0){if(player.userData.parry>0){state.rage=Math.min(100,state.rage+12);sfx('parry')}else{state.hp=Math.max(0,state.hp-p.damage);sfx('hurt');if(state.hp<=0)die()}p.life=0}if(p.from==='player'){for(const e of enemies){if(e.alive&&p.m.position.distanceTo(e.mesh.position.clone().add(new THREE.Vector3(0,1,0)))<1){damageEnemy(e,p.damage);p.life=0;break}}}if(p.life<=0){scene.remove(p.m);projectiles.splice(i,1)}}}
+function updateParticles(dt){for(let i=particles.length-1;i>=0;i--){let p=particles[i];p.life-=dt;p.v.y-=8*dt;p.m.position.addScaledVector(p.v,dt);p.m.scale.multiplyScalar(.96);if(p.life<=0){scene.remove(p.m);particles.splice(i,1)}}}
+function die(){if(state.dead)return;state.dead=true;paused=true;$('#bossHud').style.display='none';overlay.classList.remove('hidden');menu.innerHTML=`<div class="kicker">THE OATH IS NOT OVER</div><h1>ASHES<br><span>REMAIN</span></h1><p class="desc">Death is a pause in the telling, not its end. Return to the last oathstone and try again.</p><div class="menurow"><button class="primary" id="respawn">Return to the oathstone</button><button id="title">Title screen</button></div>`;$('#respawn').onclick=()=>{state.hp=state.maxHp;state.stam=state.maxStam;state.dead=false;player.position.set(0,0,state.quest===0?7:state.quest===1?-30:-39);for(const e of enemies)if(e.alive){scene.remove(e.mesh);e.alive=false}if(state.quest===1)spawnEnemy('boss',0,-36);overlay.classList.add('hidden');paused=false;saveGame()};$('#title').onclick=()=>location.reload()}
+function baseEndingScreen(){paused=true;overlay.classList.remove('hidden');menu.innerHTML=`<div class="kicker">THE END · ASHEN OATH</div><h1>LET THE<br><span>DEAD REST</span></h1><p class="desc">The bell is silent. The names return to the river, not as forgotten things but as lives that were lived. Orin walks on without absolution. Mara carries the ledger, and begins to speak every name she can read.</p><p class="desc">The oath is fulfilled. Your journey is complete.</p><div class="menurow"><button class="primary" id="again">Begin again</button><button id="closeEnd">Return to title</button></div>`;$('#again').onclick=()=>{localStorage.removeItem('ashenOathSave');location.reload()};$('#closeEnd').onclick=()=>location.reload();saveGame()}
+function baseSaveGame(){try{localStorage.setItem('ashenOathSave',JSON.stringify({hp:state.hp,maxHp:state.maxHp,stam:state.stam,rage:state.rage,xp:state.xp,level:state.level,coins:state.coins,chapter:state.chapter,weaponLevel:state.weaponLevel,skill:state.skill,checkpoint:state.checkpoint,quest:state.quest,bosses:state.bosses,flags:state.flags,player:player?{x:player.position.x,z:player.position.z}:null}))}catch{}}
+function loadGame(){try{const s=JSON.parse(localStorage.getItem('ashenOathSave')||'null');if(!s)return false;Object.assign(state,s);return true}catch{return false}}
+function showSettings(){menu.innerHTML=`<div class="kicker">FIELD OPTIONS</div><h1>SETTINGS</h1><p class="desc">Tune the journey to your hands.</p><p>Difficulty <select id="diff"><option value="story">Story</option><option value="normal">Balanced</option><option value="hard">Ashen</option></select></p><p><label><input id="sound" type="checkbox" checked> sound effects & synthesized dialogue cues</label></p><p><label><input id="numbers" type="checkbox"> damage numbers</label></p><div class="menurow"><button class="primary" id="saveSettings">Apply</button><button id="backMenu">Back</button></div>`;$('#diff').value=state.difficulty;$('#sound').checked=state.sound;$('#numbers').checked=state.damageNumbers;$('#saveSettings').onclick=()=>{state.difficulty=$('#diff').value;state.sound=$('#sound').checked;state.damageNumbers=$('#numbers').checked;state.maxHp=state.difficulty==='story'?130:100;state.hp=Math.min(state.hp,state.maxHp);if(state.difficulty==='hard')enemies.forEach(e=>e.damage*=1.25);else if(state.difficulty==='story')enemies.forEach(e=>e.damage*=.7);$('#backMenu').click()};$('#backMenu').onclick=showTitle}
+function showTitle(){menu.innerHTML=`<div class="kicker">AN ORIGINAL DARK FANTASY ACTION RPG</div><h1>ASHEN<br><span>OATH</span></h1><p class="desc">The dead have forgotten their names. The living have forgotten their debts. Master three combat stances, break five ancient guardians, explore memory shrines, command Mara in combat, and decide what a world is allowed to remember.</p><div class="menurow"><button class="primary" id="newGame">Begin the Oath</button><button id="continueGame">Continue</button><button id="settings">Settings</button></div><div class="small">expanded single-file browser RPG · keyboard/mouse, touch, and gamepad controls<br>three stances · five boss guardians · skill tree · side oaths · local saves</div>`;$('#newGame').onclick=startNew;$('#continueGame').onclick=continueGame;$('#settings').onclick=showSettings}
+function baseStartNew(){localStorage.removeItem('ashenOathSave');Object.assign(state,{hp:100,maxHp:100,stam:100,maxStam:100,rage:0,xp:0,level:1,coins:0,chapter:0,weaponLevel:1,skill:0,checkpoint:0,quest:0,bosses:[],flags:{},dead:false});enemies.forEach(e=>scene.remove(e.mesh));enemies=[];player.position.set(0,0,7);overlay.classList.add('hidden');paused=false;gameStarted=true;state.quest=0;$('#objective').textContent='Find the bell beneath the drowned chapel.';announce('CHAPTER I · THE DROWNED BELL');say('MARA','You said this place was empty.');say('ORIN','It was. Before the river started returning things.');say('MARA','Returning them to who?');say('ORIN','That is what we are here to find out.');saveGame()}
+function baseContinueGame(){if(!loadGame()){announce('NO OATHSTONE FOUND');return}player.position.set(state.player?.x||0,0,state.player?.z||7);overlay.classList.add('hidden');paused=false;gameStarted=true;if(state.quest===1&&!state.flags.wardenDead)spawnEnemy('boss',0,-36);if(state.quest===0)say('MARA','The bell is still down there.');else say('MARA','We should finish what we started.');updateHUD()}
+function pauseMenu(){if(!gameStarted)return;paused=true;overlay.classList.remove('hidden');menu.innerHTML=`<div class="kicker">OATHSTONE PAUSE</div><h1>TAKE A<br><span>BREATH</span></h1><p class="desc">Your progress is saved at important moments. Return to the causeway when ready.</p><div class="menurow"><button class="primary" id="resume">Resume</button><button id="saveExit">Save & title</button><button id="journal">Journal</button></div>`;$('#resume').onclick=()=>{overlay.classList.add('hidden');paused=false};$('#saveExit').onclick=()=>{saveGame();location.reload()};$('#journal').onclick=()=>{menu.innerHTML=`<div class="kicker">FIELD JOURNAL</div><h1>THE OATH</h1><p class="desc">Orin, a disgraced keeper of the dead, has followed a bell that should not ring. Mara, a young archivist, believes the river is returning names that were erased by the old crown. The drowned chapel holds the first answer.</p><p class="desc">Level ${state.level} · ${state.xp} experience · ${state.coins} cinders · weapon rank ${state.weaponLevel}</p><div class="menurow"><button class="primary" id="journalBack">Back</button></div>`;$('#journalBack').onclick=pauseMenu}}
+function levelUp(){let need=100*state.level;if(state.xp>=need){state.xp-=need;state.level++;state.maxHp+=8;state.hp=state.maxHp;state.maxStam+=4;announce('LEVEL UP · '+state.level);say('MARA','You’re getting stronger. Try not to mistake that for being right.');}}
+let touchMove={x:0,y:0};
+function bindControls(){
+ window.addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','Tab','ArrowUp','ArrowDown'].includes(e.code))e.preventDefault();if(e.repeat)return;if(e.code==='Space')dodge();if(e.code==='KeyQ'||e.code==='ShiftLeft')guard();if(e.code==='KeyR')ranged();if(e.code==='KeyF')special();if(e.code==='KeyE')interact();if(e.code==='Digit1'){activeWeapon=0;announce('RELIC BLADE EQUIPPED')}if(e.code==='Digit2'){activeWeapon=1;announce('CINDER AXE EQUIPPED')}if(e.code==='Tab'){lockTarget=enemies.find(e=>e.alive)||null;announce(lockTarget?'TARGET LOCKED':'NO TARGET')}if(e.code==='Escape')pauseMenu();if(e.code==='KeyJ'&&gameStarted){paused=true;overlay.classList.remove('hidden');menu.innerHTML=`<div class="kicker">SKILLS & RELICS</div><h1>EMBER<br><span>CRAFT</span></h1><p class="desc">Spend 1 skill point to harden your oath. Upgrade your weapon for more damage, or deepen your ember for a stronger ultimate.</p><p>skill points: ${state.skill} · weapon rank: ${state.weaponLevel}</p><div class="menurow"><button class="primary" id="upWeapon" ${state.coins<20?'disabled':''}>Temper weapon · 20 cinders</button><button id="upVital" ${state.skill<1?'disabled':''}>Vitality +20 · 1 point</button><button id="closeSkill">Return</button></div>`;$('#upWeapon').onclick=()=>{if(state.coins>=20){state.coins-=20;state.weaponLevel++;announce('WEAPON TEMPERED');pauseMenu()}};$('#upVital').onclick=()=>{if(state.skill>0){state.skill--;state.maxHp+=20;state.hp=state.maxHp;pauseMenu()}};$('#closeSkill').onclick=()=>{overlay.classList.add('hidden');paused=false}}});
+ window.addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='KeyQ'||e.code==='ShiftLeft')player.userData.block=false});
+ renderer.domElement.addEventListener('mousemove',e=>{if(paused||innerWidth<750)return;if(document.pointerLockElement===renderer.domElement){camera.rotation.order='YXZ';camera.rotation.y-=e.movementX*.002*state.mouseSensitivity;camera.rotation.x=THREE.MathUtils.clamp(camera.rotation.x-e.movementY*.0015,-.15,.5);}});
+ renderer.domElement.addEventListener('mousedown',e=>{if(paused)return;if(e.button===0)attack('light');if(e.button===2)attack('heavy')});renderer.domElement.addEventListener('contextmenu',e=>e.preventDefault());
+ // pointer-lock mouse look uses a separate yaw because follow camera is reoriented every frame
+ document.addEventListener('mousemove',e=>{if(document.pointerLockElement===renderer.domElement&&!paused){camera.rotation.y-=e.movementX*.002*state.mouseSensitivity}});
+ const pad=$('#pad'),nub=$('#nub');let pid=null,rect;
+ pad.addEventListener('pointerdown',e=>{pid=e.pointerId;pad.setPointerCapture(pid);rect=pad.getBoundingClientRect();movePad(e)});pad.addEventListener('pointermove',e=>{if(pid===e.pointerId)movePad(e)});pad.addEventListener('pointerup',e=>{pid=null;touchMove={x:0,y:0};nub.style.transform='translate(0,0)'});function movePad(e){let x=(e.clientX-(rect.left+rect.width/2))/(rect.width*.34),y=(e.clientY-(rect.top+rect.height/2))/(rect.height*.34);touchMove={x:THREE.MathUtils.clamp(x,-1,1),y:THREE.MathUtils.clamp(y,-1,1)};nub.style.transform=`translate(${touchMove.x*32}px,${touchMove.y*32}px)`}
+ document.querySelectorAll('.act').forEach(b=>{b.addEventListener('pointerdown',e=>{e.preventDefault();let a=b.dataset.a;if(a==='light')attack('light');if(a==='heavy')attack('heavy');if(a==='dodge')dodge();if(a==='block')guard()});b.addEventListener('pointerup',()=>{if(b.dataset.a==='block')player.userData.block=false})});
+}
+function baseLoop(){requestAnimationFrame(loop);if(!renderer)return;const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;if(gameStarted&&!paused){updatePlayer(dt);updateEnemies(dt,t);updateProjectiles(dt);updateParticles(dt);levelUp();updateHUD();for(const o of interactables){const d=Math.hypot(o.x-player.position.x,o.z-player.position.z);if(d<2.7){$('#prompt').style.display='block';$('#prompt').textContent='[E] '+o.label;break}else $('#prompt').style.display='none'}if(dialogueTimer>0){dialogueTimer-=dt;if(dialogueTimer<=0){$('#speaker').textContent='';$('#line').textContent='';nextLine()}}else nextLine();if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('#toast').style.opacity=0}if(Math.random()<dt*.04&&t-lastBark>14&&state.quest<3){lastBark=t;if(state.quest===0)say('MARA','There are footprints going into the water. None coming back out.')}if(state.hp<state.maxHp&&state.quest===2&&Math.random()<dt*.08)state.hp=Math.min(state.maxHp,state.hp+.4)}
+ if(shake>0){shake=Math.max(0,shake-dt*.8);camera.position.x+=(Math.random()-.5)*shake;camera.position.y+=(Math.random()-.5)*shake}
+ renderer.render(scene,camera)}
+
+/* ASHEN OATH — expanded combat, progression, exploration and accessibility layer */
+const oath = {
+  stance: 0, stances: [
+    {name:'WAYFARER',desc:'balanced cuts and reliable recovery',speed:1,damage:1,guard:1},
+    {name:'REAVER',desc:'heavy pressure and posture damage',speed:.86,damage:1.35,guard:.72},
+    {name:'TIDE',desc:'quick evasive cuts and safer recovery',speed:1.24,damage:.82,guard:1.12}
+  ],
+  combo:0, comboTimer:0, perfectDodge:0, parryWindow:.22, stealth:false,
+  companionCd:0, companionTarget:null, companionHelp:0, killStreak:0,
+  mapOpen:false, lastHit:0, bossPosture:0, skillTree:{edge:false,flow:false,heart:false,ember:false},
+  sideQuest:{ledger:false,shrines:0,duel:false}, discovered:{causeway:true,chapel:false,altar:false},
+  bossIndex:0, bossNames:['THE HOLLOW WARDEN','THE SALT-WIDOW','THE RED JUDGE','THE MOURNING STAG','THE NAMELESS KING'],
+  regionNames:['THE DROWNED CAUSEWAY','THE SUNKEN CHAPEL','THE CINDER GARDEN','THE BLACK STAIR','THE PALE THRONE'],
+  regionLines:['The river returns what the crown buried.','Stone remembers every footstep.','The roots drink old vows.','Every stair was built from a broken promise.','The last name waits beyond the ash.'],
+  companionOrder:0, lastEnemyCount:0, encounterRewarded:{}, controller:null, gamepadIndex:-1,
+  questFlags:{}
+};
+let expandedDamageTexts=[], expandedLastFrame=0;
+const originalDamageEnemy=baseDamageEnemy;
+const originalAttack=baseAttack;
+const originalDodge=baseDodge;
+const originalGuard=baseGuard;
+const originalRanged=baseRanged;
+const originalSpecial=baseSpecial;
+const originalUpdatePlayer=baseUpdatePlayer;
+const originalUpdateEnemies=baseUpdateEnemies;
+const originalInteract=baseInteract;
+const originalSaveGame=baseSaveGame;
+const originalSpawnEnemy=baseSpawnEnemy;
+
+function tip(text,duration=2){const el=$('#combatTip');if(!el)return;el.textContent=text;el.style.opacity=1;clearTimeout(tip._t);tip._t=setTimeout(()=>el.style.opacity=0,duration*1000)}
+function addDamageText(pos,amount,kind='hit'){
+  if(!state.damageNumbers)return;
+  const el=document.createElement('div');el.textContent=Math.round(amount);el.style.cssText=`position:absolute;color:${kind==='heavy'?'#ffd17b':kind==='critical'?'#ff826d':'#f1eee4'};font:bold 15px Arial;left:50%;top:43%;text-shadow:0 2px 5px #000;transform:translate(${(Math.random()-.5)*100}px,${(Math.random()-.5)*40}px);`;
+  $('#damageLayer').appendChild(el);setTimeout(()=>el.remove(),650);
+}
+function updateCombatMeta(){
+  const st=oath.stances[oath.stance];
+  $('#stanceLabel').textContent='STANCE · '+st.name;
+  $('#comboLabel').textContent=oath.combo>1?`COMBO × ${oath.combo}`:'';
+  const r=Math.max(0,Math.min(4,Math.floor(Math.max(0,-player.position.z-2)/23)));
+  $('#regionLabel').textContent=oath.regionNames[Math.min(r,oath.regionNames.length-1)];
+  $('#allyStatus').textContent=oath.companionCd>0?'MARA · RECOVERING':'MARA · READY';
+  const b=enemies.find(e=>e.boss&&e.alive);
+  if(b){$('#bossPostureWrap').style.display='block';$('#bossPosture').style.width=Math.min(100,(b.stagger||0))+'%';}
+  else $('#bossPostureWrap').style.display='none';
+}
+function setStance(n){oath.stance=(n+oath.stances.length)%oath.stances.length;announce(oath.stances[oath.stance].name+' STANCE');tip(oath.stances[oath.stance].desc)}
+function cycleTarget(){
+  const alive=enemies.filter(e=>e.alive);
+  if(!alive.length){lockTarget=null;tip('NO HOSTILE TARGET');return}
+  let i=alive.indexOf(lockTarget);lockTarget=alive[(i+1)%alive.length];
+  tip('TARGET · '+(lockTarget.boss?(oath.bossNames[Math.min(oath.bossIndex,4)]):lockTarget.type.toUpperCase()));
+}
+function damageEnemy(e,d,heavy=false){
+  if(!e.alive)return;
+  const st=oath.stances[oath.stance];
+  let final=d*st.damage*(state.weaponLevel?1+(state.weaponLevel-1)*.09:1);
+  if(e.exposed>0)final*=1.3;
+  if(e.type==='shield'&&!e.broken&&!heavy)final*=.28;
+  if(e.type==='shield'&&heavy){e.broken=true;e.guard=0;tip('GUARD BROKEN');}
+  e.hp-=final;e.stagger=(e.stagger||0)+(heavy?38:14)*(oath.stance===1?1.45:1);
+  e.hitFlash=.16;e.exposed=0;
+  sfx(heavy?'heavy':'hit');
+  spawnBurst(e.mesh.position.clone().add(new THREE.Vector3(0,1,0)),heavy?'#e8b35d':'#e7e1d2',heavy?12:6);
+  addDamageText(e.mesh.position,final,heavy?'heavy':'hit');
+  shake=Math.min(.24,shake+.035);
+  if(e.hp<=0){
+    e.alive=false;scene.remove(e.mesh);state.xp+=e.boss?320:e.elite?65:25;state.coins+=e.boss?55:e.elite?12:4;
+    state.rage=Math.min(100,state.rage+(e.boss?40:10));oath.killStreak++;oath.combo=Math.max(oath.combo,1);
+    if(e.boss){
+      $('#bossHud').style.display='none';state.bosses=state.bosses||[];
+      if(!state.bosses.includes(e.bossName||oath.bossNames[oath.bossIndex]))state.bosses.push(e.bossName||oath.bossNames[oath.bossIndex]);
+      bossDefeated(e);
+    }else{
+      if(oath.killStreak>=3){state.rage=Math.min(100,state.rage+6);tip('FLOW · '+oath.killStreak+' DEFEATS')}
+      if(Math.random()<.18){state.coins+=2;state.hp=Math.min(state.maxHp,state.hp+4)}
+    }
+    updateHUD();saveGame();
+  }else if(e.stagger>=100+(e.boss?45:0)){e.stun=e.boss?.7:1.05;e.stagger=0;e.exposed=2.1;sfx('parry');tip('OPENING · PUNISH');}
+}
+function attack(kind){
+  if(paused||!player||state.dead||state.stam<(kind==='heavy'?15:7))return;
+  const now=performance.now()/1000, u=player.userData, st=oath.stances[oath.stance];
+  const cooldown=(kind==='heavy'?.5:.22)/st.speed;
+  if(now-u.lastAttack<cooldown)return;
+  u.lastAttack=now;u.attack=kind==='heavy'?.42:.28;u.combo=(u.combo+1)%4;
+  oath.combo=Math.min(5,oath.combo+1);oath.comboTimer=1.25;
+  state.stam=Math.max(0,state.stam-(kind==='heavy'?18:7));
+  if(kind==='heavy')sfx('heavy');else sfx('hit');
+  const dir=new THREE.Vector3(Math.sin(player.rotation.y),0,Math.cos(player.rotation.y));
+  const range=(kind==='heavy'?3.15:2.55)*(oath.stance===1?1.08:1);
+  let hit=0;
+  for(const e of enemies){
+    if(!e.alive)continue;
+    const to=e.mesh.position.clone().sub(player.position);const dist=to.length();to.y=0;to.normalize();
+    if(dist<range&&dir.dot(to)>(kind==='heavy'?.02:-.18)){
+      const damage=(kind==='heavy'?38:21)+(u.combo*3);
+      damageEnemy(e,damage,kind==='heavy');hit++;
+      e.mesh.position.addScaledVector(dir,kind==='heavy'?.65:.25);
+      if(e.boss&&e.windup>0){e.windup=0;e.attackCd=Math.max(e.attackCd,.45)}
+    }
+  }
+  if(hit){state.rage=Math.min(100,state.rage+hit*(kind==='heavy'?8:4));oath.lastHit=now;}
+}
+function dodge(){
+  if(paused||state.stam<15)return;
+  const u=player.userData;state.stam-=15;u.invuln=.52;oath.perfectDodge=.22;
+  let f=new THREE.Vector3((keys.KeyD?1:0)-(keys.KeyA?1:0),0,(keys.KeyS?1:0)-(keys.KeyW?1:0));
+  if(f.lengthSq()<.1)f.set(0,0,1);
+  const yaw=player.rotation.y;
+  const forward=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));
+  const right=new THREE.Vector3(forward.z,0,-forward.x);
+  f=right.multiplyScalar(f.x).add(forward.multiplyScalar(f.z)).normalize();
+  player.position.addScaledVector(f,2.6);sfx('dodge');
+  spawnBurst(player.position.clone().add(new THREE.Vector3(0,.7,0)),'#8bbdb6',7);
+  if(enemies.some(e=>e.alive&&e.windup>0&&e.mesh.position.distanceTo(player.position)<4)){
+    oath.perfectDodge=0.55;state.rage=Math.min(100,state.rage+12);state.stam=Math.min(state.maxStam,state.stam+8);tip('PERFECT STEP');
+  }
+}
+function guard(){
+  if(paused||state.stam<1)return;
+  player.userData.block=true;player.userData.parry=oath.parryWindow;state.stam=Math.max(0,state.stam-.35);
+}
+function ranged(){
+  if(paused||state.stam<10)return;
+  state.stam-=10;sfx('magic');
+  const d=new THREE.Vector3(Math.sin(player.rotation.y),.04,Math.cos(player.rotation.y)).normalize();
+  const p=sphere(.14,mats.glow,player.position.x+d.x*.8,1.45,player.position.z+d.z*.8);
+  projectiles.push({m:p,v:d.multiplyScalar(24),life:2.1,from:'player',damage:34});scene.add(p);
+}
+function special(){
+  if(paused||state.rage<100)return;
+  state.rage=0;sfx('magic');announce('EMBER RECKONING');
+  const center=player.position.clone();
+  for(const e of enemies){if(e.alive&&e.mesh.position.distanceTo(center)<7.5){damageEnemy(e,75,true);e.stun=Math.max(e.stun||0,.45)}}
+  spawnBurst(center.clone().add(new THREE.Vector3(0,1,0)),'#e88b49',42);shake=.22;updateHUD();
+}
+function updatePlayer(dt){
+  originalUpdatePlayer(dt);
+  if(!player)return;
+  const u=player.userData;
+  oath.perfectDodge=Math.max(0,oath.perfectDodge-dt);
+  oath.comboTimer=Math.max(0,oath.comboTimer-dt);if(oath.comboTimer<=0)oath.combo=0;
+  oath.companionCd=Math.max(0,oath.companionCd-dt);
+  if(u.block&&state.stam<=0)u.block=false;
+  if(oath.stealth&&enemies.every(e=>!e.alive||e.mesh.position.distanceTo(player.position)>8)){
+    // stealth approach: first strike gains a substantial opening bonus
+    u.stealthReady=true;
+  }
+  updateCombatMeta();
+}
+function updateEnemies(dt,t){
+  for(const e of enemies){
+    if(!e.alive)continue;
+    const m=e.mesh, ep=player.position.clone().sub(m.position), dist=ep.length();
+    const flat=new THREE.Vector3(ep.x,0,ep.z);
+    if(flat.lengthSq()>.001)m.rotation.y=Math.atan2(flat.x,flat.z);
+    if(e.stun>0){e.stun-=dt;continue}
+    e.attackCd-=dt;e.windup=Math.max(0,e.windup-dt);
+    if(e.hitFlash>0)e.hitFlash-=dt;
+    if(e.boss&&e.hp<e.maxHp*.66)e.phase=1;
+    if(e.boss&&e.hp<e.maxHp*.32)e.phase=2;
+    const speed=e.boss?(e.phase===2?3.25:e.phase===1?2.5:1.8):e.type==='fast'?4.5:e.type==='heavy'?1.35:e.type==='ranged'?1.7:2.3;
+    if(e.type==='ranged'&&dist<4.5){m.position.addScaledVector(flat.normalize(),-speed*dt)}
+    else if(dist>(e.range||2.2)*.82){m.position.addScaledVector(flat.normalize(),speed*dt)}
+    else if(e.attackCd<=0&&e.windup<=0){
+      e.windup=e.boss?(e.phase===2?.42:e.phase===1?.58:.78):e.type==='fast'?.32:e.type==='heavy'?.8:.52;
+      e.attackCd=e.boss?(e.phase===2?1.1:e.phase===1?1.45:1.9):e.type==='fast'?.92:e.type==='heavy'?2.1:1.5;
+      e.attackPattern=((e.attackPattern||0)+1)%3;
+      if(e.type==='ranged'||(e.boss&&e.phase>0&&e.attackPattern===2)){
+        const p=sphere(.18,mats.ember,m.position.x,1.55,m.position.z);
+        const v=player.position.clone().add(new THREE.Vector3(0,1,0)).sub(p.position).normalize().multiplyScalar(e.boss?8:7);
+        projectiles.push({m:p,v,life:3,from:'enemy',damage:e.boss?15:10});scene.add(p);
+      }
+    }
+    if(e.windup>0&&e.windup<dt*1.5){
+      const d=player.position.distanceTo(m.position);
+      if(d<(e.boss?3.9:2.25)){
+        const u=player.userData;
+        if(u.parry>0){
+          e.stun=e.boss?.9:1.25;e.windup=0;e.stagger=0;e.exposed=2.2;sfx('parry');
+          state.rage=Math.min(100,state.rage+20);state.stam=Math.min(state.maxStam,state.stam+7);
+          spawnBurst(m.position.clone().add(new THREE.Vector3(0,1,0)),'#b6ece2',16);tip('PERFECT PARRY');
+        }else if(u.invuln<=0){
+          const damage=e.damage*(u.block?.28:1)*(state.difficulty==='story'?.65:state.difficulty==='hard'?1.3:1);
+          state.hp=Math.max(0,state.hp-damage);sfx('hurt');shake=.14;
+          spawnBurst(player.position.clone().add(new THREE.Vector3(0,1,0)),'#c94c49',8);
+          if(state.hp<=0)die();
+        }
+      }
+    }
+  }
+  spawnWave();
+}
+function spawnEnemy(type,x,z){
+  const e=originalSpawnEnemy(type,x,z);
+  if(!e)return e;
+  if(type!=='boss'){
+    e.elite=type==='elite';e.maxHp=type==='heavy'?175:type==='elite'?220:type==='fast'?68:type==='ranged'?70:type==='shield'?105:88;
+    e.hp=e.maxHp;e.damage=type==='heavy'?19:type==='elite'?22:type==='fast'?9:type==='ranged'?11:12;
+    e.range=type==='ranged'?8:type==='fast'?1.7:2.15;e.guard=type==='shield'?.65:0;
+  }else{
+    e.maxHp=560;e.hp=e.maxHp;e.damage=20;e.range=2.8;e.bossName=oath.bossNames[Math.min(oath.bossIndex,4)];
+    $('#bossName').textContent=e.bossName;
+  }
+  return e;
+}
+function bossDefeated(e){
+  const idx=Math.max(0,oath.bossNames.indexOf(e.bossName||oath.bossNames[oath.bossIndex]));
+  oath.bossIndex=Math.max(oath.bossIndex,idx+1);
+  oath.killStreak=0;
+  state.xp+=250;state.coins+=35;state.rage=100;state.hp=Math.min(state.maxHp,state.hp+30);
+  announce('BOSS DEFEATED · '+(e.bossName||oath.bossNames[idx]));
+  const lines=[
+    ['MARA','It was guarding the names, not the bell. We keep finding guardians where someone hid the truth.'],
+    ['MARA','The roots were wrapped around its heart. The whole garden was holding its breath.'],
+    ['MARA','That judge had no face. Just a list of everyone he condemned.'],
+    ['MARA','It did not attack until we crossed the old trail. It was protecting the way home.'],
+    ['ORIN','I spent my life believing a name could be owned. Today, I give them back.']
+  ];
+  const l=lines[Math.min(idx,lines.length-1)];say(l[0],l[1],5);
+  state.quest=Math.max(state.quest,idx+2);
+  state.flags=state.flags||{};state.flags['boss'+idx]=true;
+  $('#objective').textContent=idx>=4?'Reach the final oathstone and decide what to remember.':'Follow the ash marks to the next region.';
+  saveGame();
+}
+function addRegion(z, color, label, seed){
+  box(18,.5,22,mat(color),0,-.15,z);
+  for(let i=0;i<12;i++){
+    const a=(i/12)*Math.PI*2, r=5.5+(i%3)*1.7;
+    const x=Math.cos(a)*r, zz=z+Math.sin(a)*r;
+    const pillar=box(.6,2.2+(i%4)*.7,.6,mat(i%2?'#45474c':'#5a5148'),x,1,zz);
+    pillar.rotation.y=a*.4;
+  }
+  for(let i=0;i<8;i++){
+    const x=(Math.random()-.5)*13, zz=z+(Math.random()-.5)*15;
+    const rock=sphere(.45+Math.random()*.6,mat(i%2?'#343a3d':color),x,.05,zz);rock.scale.set(1,.55,1.25);
+  }
+  cylinder(1.6,2,.55,mat('#262a2e'),0,.2,z);
+  cylinder(.45,.7,1.1,mat('#b18a50',.4,.5),0,1,z);
+  makeInteract(0,0,z,label,()=>{
+    const idx=oath.regionNames.indexOf(label);
+    if(idx<=oath.bossIndex){state.checkpoint=idx;player.position.set(0,0,z+4);state.hp=state.maxHp;state.stam=state.maxStam;announce('OATHSTONE RESTORED');saveGame();}
+    else tip('THE PATH IS SEALED');
+  });
+}
+function buildExpandedRegions(){
+  // Five compact, connected arenas beyond the original causeway; each is built from authored procedural geometry.
+  addRegion(-61,'#3d4a48','Cinder Garden Oathstone',1);
+  addRegion(-82,'#494147','Black Stair Oathstone',2);
+  addRegion(-103,'#353b45','Pale Throne Oathstone',3);
+  // Extra enemy patrols in unlocked stretches, with distinct combat roles.
+  spawnEnemy('shield',-3,-12);spawnEnemy('fast',3,-17);spawnEnemy('ranged',-3,-22);
+  spawnEnemy('heavy',-2,-29);spawnEnemy('shield',3,-31);
+  makeInteract(-5,0,-18,'Read the ferryman ledger',()=>{
+    if(!oath.sideQuest.ledger){oath.sideQuest.ledger=true;state.xp+=90;state.coins+=20;state.skill++;announce('SIDE OATH · NAMES RETURNED');say('MARA','Every line is a person. Not a tally. I can read them aloud, if you can bear to listen.');saveGame();}
+    else tip('THE LEDGER HAS BEEN READ');
+  });
+  for(let i=0;i<3;i++){
+    const x=(i-1)*3,z=-48-i*3;
+    makeInteract(x,0,z,'Light memory shrine',()=>{
+      if(!oath.sideQuest.shrines || oath.sideQuest.shrines<3){
+        oath.sideQuest.shrines=(oath.sideQuest.shrines||0)+1;state.xp+=45;state.rage=Math.min(100,state.rage+15);
+        announce('MEMORY SHRINE '+oath.sideQuest.shrines+'/3');saveGame();
+      }else tip('ALL SHRINES KINDLED');
+    });
+  }
+  makeInteract(0,0,-59,'Challenge the Salt-Widow',()=>startBoss(1));
+  makeInteract(0,0,-80,'Challenge the Red Judge',()=>startBoss(2));
+  makeInteract(0,0,-101,'Challenge the Mourning Stag',()=>startBoss(3));
+  makeInteract(0,0,-120,'Challenge the Nameless King',()=>startBoss(4));
+}
+function startBoss(idx){
+  if(state.bosses.includes(oath.bossNames[idx])||state.flags['boss'+idx]){tip('THIS OATH HAS BEEN SETTLED');return}
+  if(enemies.some(e=>e.alive&&e.boss)){tip('A BOSS IS ALREADY HUNTING YOU');return}
+  if(idx>oath.bossIndex){tip('THE OATHSTONE IS STILL SILENT');return}
+  oath.bossIndex=idx;
+  const z=[-36,-61,-82,-103,-120][idx];
+  const x=[0,0,0,0,0][idx];
+  const e=spawnEnemy('boss',x,z-3);
+  e.bossName=oath.bossNames[idx];e.maxHp=e.hp=[560,620,690,740,900][idx];e.damage=[20,22,24,25,28][idx];
+  e.type=['melee','heavy','fast','elite','heavy'][idx];e.range=idx===2?2.1:3.1;
+  $('#bossName').textContent=e.bossName;$('#bossHud').style.display='block';
+  state.checkpoint=idx;state.hp=Math.min(state.maxHp,state.hp+20);state.stam=state.maxStam;
+  announce('BOSS ENCOUNTER · '+e.bossName);
+  const barks=[
+    ['WARDEN','You rang the bell. Now every forgotten thing knows your name.'],
+    ['SALT-WIDOW','I kept their last breaths in shells. You call that cruelty because you were not there.'],
+    ['RED JUDGE','Mercy is a story the powerful tell after the verdict.'],
+    ['MOURNING STAG','I remember the forest before your roads. I remember every tree that screamed.'],
+    ['NAMELESS KING','If no one remembers a king, did he ever rule?']
+  ];
+  say(barks[idx][0],barks[idx][1],4.5);
+}
+function interact(){
+  let nearest=null,dist=3.0;
+  for(const o of interactables){const d=Math.hypot(o.x-player.position.x,o.z-player.position.z);if(d<dist){nearest=o;dist=d}}
+  if(!nearest){
+    if(state.quest===0&&player.position.z<-22)say('ORIN','The bell is below the waterline. Find a way into the chapel.');
+    else tip('NOTHING WITHIN REACH',1);return;
+  }
+  if(nearest.label==='Touch the ash altar'){
+    if(oath.bossIndex>=4&&state.flags.boss4){state.flags.ending=true;state.quest=7;announce('OATH FULFILLED');say('MARA','You could have made them remember you. Instead you let them rest.');say('ORIN','I spent a lifetime asking the dead to forgive me. I never asked what they needed.');setTimeout(()=>endingScreen(),4200);return}
+    if(state.quest>=2){startBoss(Math.min(4,Math.max(1,oath.bossIndex)));return}
+  }
+  if(nearest.label.startsWith('Challenge the ')){
+    const idx=oath.bossNames.indexOf(nearest.label.replace('Challenge the ',''));
+    if(idx>=0){startBoss(idx);return}
+  }
+  nearest.fn();
+}
+function updateHUD(){
+  $('#hpFill').style.width=(state.hp/state.maxHp*100)+'%';
+  $('#stamFill').style.width=(state.stam/state.maxStam*100)+'%';
+  $('#rageFill').style.width=state.rage+'%';
+  const b=enemies.find(e=>e.boss&&e.alive);
+  if(b){$('#bossFill').style.width=(b.hp/b.maxHp*100)+'%';$('#bossName').textContent=b.bossName||oath.bossNames[oath.bossIndex]}
+}
+function saveGame(){
+  try{
+    localStorage.setItem('ashenOathSave',JSON.stringify({
+      hp:state.hp,maxHp:state.maxHp,stam:state.stam,maxStam:state.maxStam,rage:state.rage,xp:state.xp,level:state.level,
+      coins:state.coins,chapter:state.chapter,weaponLevel:state.weaponLevel,skill:state.skill,checkpoint:state.checkpoint,
+      quest:state.quest,bosses:state.bosses,flags:state.flags,player:player?{x:player.position.x,z:player.position.z}:null,
+      oath:{stance:oath.stance,sideQuest:oath.sideQuest,bossIndex:oath.bossIndex,skillTree:oath.skillTree,discovered:oath.discovered}
+    }));
+  }catch{}
+}
+function showExpandedSkills(){
+  paused=true;overlay.classList.remove('hidden');
+  const skills=[
+    ['edge','Tempered Edge','+18% weapon damage','coins',25],
+    ['flow','River Footwork','faster stamina recovery','skill',1],
+    ['heart','Keeper’s Heart','+25 maximum vitality','skill',1],
+    ['ember','Ember Mastery','ultimate deals more posture damage','skill',1]
+  ];
+  menu.innerHTML=`<div class="kicker">FIELDCRAFT · SKILL TREE</div><h1>THE WAY<br><span>FORGED</span></h1><p class="desc">Choose techniques that change how you approach a fight. Skill points: ${state.skill} · Cinders: ${state.coins} · Weapon rank: ${state.weaponLevel}</p><div id="skillRows"></div><div class="menurow"><button id="temper">Temper weapon · 25 cinders</button><button class="primary" id="skillBack">Return to field</button></div>`;
+  const rows=$('#skillRows');
+  for(const [id,name,desc,costType,cost] of skills){
+    const owned=!!oath.skillTree[id];
+    const row=document.createElement('p');row.className='desc';
+    const btn=document.createElement('button');btn.textContent=(owned?'LEARNED · ':'LEARN · ')+name;btn.disabled=owned||(costType==='coins'?state.coins<cost:state.skill<cost);
+    const text=document.createElement('span');text.textContent=' — '+desc;
+    btn.onclick=()=>{if(costType==='coins')state.coins-=cost;else state.skill-=cost;oath.skillTree[id]=true;if(id==='edge')state.weaponLevel++;if(id==='flow')state.maxStam+=25;if(id==='heart'){state.maxHp+=25;state.hp=state.maxHp}if(id==='ember')state.rage=100;saveGame();showExpandedSkills()};
+    row.appendChild(btn);row.appendChild(text);rows.appendChild(row);
+  }
+  $('#temper').onclick=()=>{if(state.coins>=25){state.coins-=25;state.weaponLevel++;announce('WEAPON TEMPERED');saveGame();showExpandedSkills()}};
+  $('#skillBack').onclick=()=>{overlay.classList.add('hidden');paused=false};
+}
+function showMap(){
+  const el=$('#mapCard');oath.mapOpen=!oath.mapOpen;el.style.display=oath.mapOpen?'block':'none';
+  $('#mapContent').innerHTML=oath.regionNames.map((n,i)=>`${i+1}. ${n} ${i<=oath.bossIndex?'✓':'—'}`).join('<br>')+'<br><br>Side oaths: '+(oath.sideQuest.ledger?'Ledger ✓':'Ledger —')+' · Shrines '+(oath.sideQuest.shrines||0)+'/3';
+}
+function companionCommand(){
+  if(oath.companionCd>0){tip('MARA IS CATCHING HER BREATH');return}
+  oath.companionCd=7;
+  const target=lockTarget&&lockTarget.alive?lockTarget:enemies.filter(e=>e.alive).sort((a,b)=>a.mesh.position.distanceTo(player.position)-b.mesh.position.distanceTo(player.position))[0];
+  if(!target){say('MARA','I have the feeling you pressed that to see if I would answer.');tip('MARA · NO TARGET');return}
+  oath.companionTarget=target;target.stagger=(target.stagger||0)+32;target.exposed=1.4;
+  if(target.windup>0){target.windup=0;target.attackCd=Math.max(target.attackCd,.7)}
+  spawnBurst(target.mesh.position.clone().add(new THREE.Vector3(0,1.3,0)),'#7ed9d0',12);
+  state.rage=Math.min(100,state.rage+10);say('MARA','Now, Orin!');tip('MARA · DISTRACTION');
+}
+function toggleStealth(){
+  oath.stealth=!oath.stealth;announce(oath.stealth?'VEIL WALK · QUIET APPROACH':'VEIL WALK · RELEASED');
+  tip(oath.stealth?'move slowly behind an unaware enemy for an opening strike':'normal combat stance');
+}
+function performStealthTakedown(){
+  if(!oath.stealth||!player.userData.stealthReady)return false;
+  const e=enemies.filter(e=>e.alive&&!e.boss&&e.mesh.position.distanceTo(player.position)<1.65).sort((a,b)=>a.mesh.position.distanceTo(player.position)-b.mesh.position.distanceTo(player.position))[0];
+  if(!e)return false;
+  damageEnemy(e,Math.max(80,e.hp+1),true);player.userData.stealthReady=false;state.rage=Math.min(100,state.rage+12);tip('SILENT TAKEDOWN');return true;
+}
+function bindExpandedInputs(){
+  window.addEventListener('keydown',e=>{
+    if(e.repeat)return;
+    if(e.code==='Digit3')setStance(oath.stance+1);
+    if(e.code==='KeyC')companionCommand();
+    if(e.code==='KeyV')toggleStealth();
+    if(e.code==='KeyM')showMap();
+    if(e.code==='KeyJ'&&gameStarted){e.preventDefault();showExpandedSkills()}
+    if(e.code==='Tab'&&gameStarted&&!paused){e.preventDefault();cycleTarget()}
+    if(e.code==='KeyE'&&gameStarted&&!paused&&oath.stealth){if(performStealthTakedown())e.stopImmediatePropagation()}
+  },true);
+  window.addEventListener('gamepadconnected',e=>{oath.controller=e.gamepad;oath.gamepadIndex=e.gamepad.index;tip('CONTROLLER CONNECTED')});
+  window.addEventListener('gamepaddisconnected',()=>{oath.controller=null;oath.gamepadIndex=-1});
+  let prevButtons=[];
+  function pollPad(){
+    if(oath.gamepadIndex>=0&&!paused&&gameStarted){
+      const gp=navigator.getGamepads?.()[oath.gamepadIndex];
+      if(gp){
+        const ax=gp.axes||[];
+        keys.KeyA=ax[0]<-.25;keys.KeyD=ax[0]>.25;keys.KeyW=ax[1]<-.25;keys.KeyS=ax[1]>.25;
+        if(gp.buttons[0]?.pressed&&!prevButtons[0])dodge();
+        if(gp.buttons[2]?.pressed&&!prevButtons[2])attack('light');
+        if(gp.buttons[3]?.pressed&&!prevButtons[3])attack('heavy');
+        if(gp.buttons[4]?.pressed&&!prevButtons[4])guard();
+        if(gp.buttons[5]?.pressed&&!prevButtons[5])ranged();
+        if(gp.buttons[1]?.pressed&&!prevButtons[1])special();
+        if(gp.buttons[8]?.pressed&&!prevButtons[8])cycleTarget();
+        prevButtons=gp.buttons.map(b=>b.pressed);
+      }
+    }
+    requestAnimationFrame(pollPad);
+  }
+  pollPad();
+  document.querySelectorAll('.act').forEach(b=>b.addEventListener('pointerdown',e=>{
+    const a=b.dataset.a;
+    if(a==='ranged')ranged();if(a==='special')special();
+  }));
+}
+function updateExpandedWorld(dt){
+  if(!player)return;
+  // A clear, traversable route connects all five arenas; cliffs are bounded without trapping the player.
+  player.position.x=THREE.MathUtils.clamp(player.position.x,-22,22);
+  player.position.z=THREE.MathUtils.clamp(player.position.z,-126,12);
+  const z=player.position.z;
+  const idx=z>-48?0:z>-70?1:z>-91?2:z>-112?3:4;
+  if(!oath.discovered[['causeway','chapel','altar','stair','throne'][idx]]){
+    const key=['causeway','chapel','altar','stair','throne'][idx];oath.discovered[key]=true;
+    announce('REGION DISCOVERED');say('MARA',oath.regionLines[idx],4);
+  }
+  // Keep the campaign gate in front of unearned boss arenas.
+  const gate=[-55,-76,-97,-115][Math.min(3,oath.bossIndex)];
+  if(z<gate-2&&oath.bossIndex<4&&!state.flags['boss'+oath.bossIndex]){
+    player.position.z=gate-2;tip('THE OATHSTONE IS STILL SEALED',1);
+  }
+}
+function updateExpandedLoop(dt){
+  if(oath.companionCd>0)oath.companionCd=Math.max(0,oath.companionCd-dt);
+  updateExpandedWorld(dt);
+  if(oath.mapOpen&&$('#mapCard').style.display==='block')$('#mapCard').style.opacity='.97';
+}
+function startNewExpanded(){
+  oath.stance=0;oath.combo=0;oath.bossIndex=0;oath.killStreak=0;
+  oath.sideQuest={ledger:false,shrines:0,duel:false};oath.discovered={causeway:true,chapel:false,altar:false};
+  state.maxStam=100;state.stam=100;state.flags={};state.bosses=[];
+  startNew();
+  // Remove duplicate live patrols on a fresh run, then seed them once.
+  oath.questFlags.patrols=false;
+}
+let startNew=baseStartNew; const oldStartNew=startNew;
+startNew=function(){oath.stance=0;oath.combo=0;oath.bossIndex=0;oath.killStreak=0;oath.sideQuest={ledger:false,shrines:0,duel:false};oath.discovered={causeway:true,chapel:false,altar:false};state.maxStam=100;state.stam=100;oldStartNew();if(!oath.questFlags.regions){buildExpandedRegions();oath.questFlags.regions=true}updateCombatMeta();};
+let continueGame=baseContinueGame; const oldContinueGame=continueGame;
+continueGame=function(){
+  const ok=loadGame();if(!ok){announce('NO OATHSTONE FOUND');return}
+  if(state.oath){oath.stance=state.oath.stance||0;oath.sideQuest=state.oath.sideQuest||oath.sideQuest;oath.bossIndex=state.oath.bossIndex||0;oath.skillTree=state.oath.skillTree||oath.skillTree;oath.discovered=state.oath.discovered||oath.discovered}
+  oldContinueGame();
+  if(!oath.questFlags.regions){buildExpandedRegions();oath.questFlags.regions=true}
+  updateCombatMeta();
+};
+let loop=baseLoop; const oldLoop=loop;
+loop=function(){
+  requestAnimationFrame(loop);if(!renderer)return;
+  const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
+  if(gameStarted&&!paused){
+    updatePlayer(dt);updateEnemies(dt,t);updateProjectiles(dt);updateParticles(dt);levelUp();updateExpandedLoop(dt);updateHUD();
+    let found=false;
+    for(const o of interactables){const d=Math.hypot(o.x-player.position.x,o.z-player.position.z);if(d<3){$('#prompt').style.display='block';$('#prompt').textContent='[E] '+o.label;found=true;break}}
+    if(!found)$('#prompt').style.display='none';
+    if(dialogueTimer>0){dialogueTimer-=dt;if(dialogueTimer<=0){$('#speaker').textContent='';$('#line').textContent='';nextLine()}}else nextLine();
+    if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('#toast').style.opacity=0}
+    if(oath.comboTimer<=0)oath.combo=0;
+  }
+  if(shake>0){shake=Math.max(0,shake-dt*.8);camera.position.x+=(Math.random()-.5)*shake;camera.position.y+=(Math.random()-.5)*shake}
+  renderer.render(scene,camera);
+};
+let endingScreen=baseEndingScreen; const oldEndingScreen=endingScreen;
+endingScreen=function(){
+  paused=true;overlay.classList.remove('hidden');
+  menu.innerHTML=`<div class="kicker">THE END · ASHEN OATH</div><h1>LET THE<br><span>DEAD REST</span></h1><p class="desc">The names return to the river, not as forgotten things but as lives that were lived. Orin gives up the one thing he spent a lifetime trying to reclaim: the right to be remembered as innocent. Mara carries the ledger, and begins to speak every name she can read.</p><p class="desc">Your oath is fulfilled. All five guardians have fallen, and the bell is finally silent.</p><div class="menurow"><button class="primary" id="again">Begin again</button><button id="closeEnd">Return to title</button></div>`;
+  $('#again').onclick=()=>{localStorage.removeItem('ashenOathSave');location.reload()};$('#closeEnd').onclick=()=>location.reload();saveGame();
+};
+/* ASHEN OATH — PROLOGUE: ASHES BEFORE DAWN */
+const story = {
+  step: 0,
+  doorClue: false,
+  wellClue: false,
+  dogMet: false,
+  trailClue: false,
+  ropeClue: false,
+  firstEnemyStarted: false,
+  firstEnemyDead: false,
+  openingDone: false,
+  openingSeen: false,
+  introLinesQueued: false,
+  clueCount: 0,
+  reset() {
+    this.step = 0;
+    this.doorClue = false;
+    this.wellClue = false;
+    this.dogMet = false;
+    this.trailClue = false;
+    this.ropeClue = false;
+    this.firstEnemyStarted = false;
+    this.firstEnemyDead = false;
+    this.openingDone = false;
+    this.openingSeen = false;
+    this.introLinesQueued = false;
+    this.clueCount = 0;
+  }
+};
+let storyDog = null, storyDogTail = null, storyMara = null;
+let storySmoke = [], storyFireLights = [], storyInteractables = {};
+let storyCinematic = {active:false, mode:'opening', elapsed:0, duration:7.8};
+let storyEncounterLock = 0;
+let storyClock = 0;
+let storySaveRestoring = false;
+let storyCameraYaw = Math.PI;
+
+const storyStyle = document.createElement('style');
+storyStyle.textContent = `
+#storyCinematic{position:fixed;inset:0;z-index:4;display:none;align-items:flex-start;justify-content:center;padding-top:clamp(34px,9vh,94px);pointer-events:none;opacity:0;transition:opacity 1.1s ease;background:linear-gradient(180deg,rgba(3,5,8,.65),transparent 35%,transparent 65%,rgba(3,5,8,.42))}
+#storyCinematic.active{display:flex;opacity:1}
+#storyCinematic .storyCard{text-align:center;max-width:90vw;letter-spacing:4px;text-transform:uppercase;text-shadow:0 3px 15px #000;color:#e9d9bc;transition:opacity .8s ease,transform .8s ease;transform:translateY(8px)}
+#storyCinematic.active .storyCard{transform:translateY(0)}
+#storyCinematic .storyOverline{font:10px Arial,sans-serif;letter-spacing:5px;color:#d6ac6b;margin-bottom:12px}
+#storyCinematic .storyTitle{font-size:clamp(26px,5vw,49px);line-height:1.1}
+#storyCinematic .storySub{margin-top:13px;font:11px Arial,sans-serif;letter-spacing:3px;color:#d3cbc0}
+#storyCinematic.fading{opacity:0}
+body:not(.story-combat) #mobile .actions{opacity:.13;filter:grayscale(1);pointer-events:none}
+#storyNote{position:fixed;left:50%;bottom:7%;transform:translateX(-50%);z-index:3;max-width:min(640px,85vw);color:#e5d9c5;font:11px/1.6 Arial,sans-serif;letter-spacing:1px;text-align:center;text-shadow:0 2px 8px #000;opacity:0;transition:opacity .35s;pointer-events:none}
+#storyNote.on{opacity:.9}
+#storyClueCount{font:9px Arial,sans-serif;letter-spacing:2px;color:#bca27b;margin-top:8px;opacity:.9}
+@media(max-width:700px){#storyCinematic{padding-top:48px}#storyCinematic .storyOverline{letter-spacing:3px}#storyNote{bottom:16%;font-size:10px}}
+`;
+document.head.appendChild(storyStyle);
+const storyCinematicEl = document.createElement('div');
+storyCinematicEl.id = 'storyCinematic';
+storyCinematicEl.innerHTML = `<div class="storyCard"><div class="storyOverline">A GAME OF ASH & MEMORY</div><div class="storyTitle">PROLOGUE</div><div class="storySub">ASHES BEFORE DAWN</div></div>`;
+document.body.appendChild(storyCinematicEl);
+const storyNoteEl = document.createElement('div');
+storyNoteEl.id = 'storyNote';
+document.body.appendChild(storyNoteEl);
+
+function storyNote(text, duration=2.8) {
+  storyNoteEl.textContent = text;
+  storyNoteEl.classList.add('on');
+  clearTimeout(storyNote._timer);
+  storyNote._timer = setTimeout(() => storyNoteEl.classList.remove('on'), duration*1000);
+}
+function setStoryObjective(text, chapter='PROLOGUE · ASHES BEFORE DAWN') {
+  $('#objective').textContent = text;
+  $('#chapter').textContent = chapter;
+  $('#regionLabel').textContent = 'ASHFALL VILLAGE';
+}
+function refreshStoryObjective() {
+  let countEl=$('#storyClueCount');
+  if(!countEl){countEl=document.createElement('div');countEl.id='storyClueCount';$('#objective').insertAdjacentElement('afterend',countEl);}
+  const foundCount=Number(story.doorClue)+Number(story.wellClue);
+  countEl.textContent=story.step===0?`VILLAGE CLUES · ${foundCount}/2`:'';
+  countEl.style.display=story.step===0?'block':'none';
+  if (story.step === 0) setStoryObjective('Search the burned village for signs of Elara. Examine the marked doorway and the dry well.');
+  else if (story.step === 1) setStoryObjective('Find the source of the barking near the collapsed storehouse.');
+  else if (story.step === 2) setStoryObjective('Follow Cinder north. Look for the tracks the ash could not hide.');
+  else if (story.step === 3) setStoryObjective('Inspect the broken signal rope at the old gate.');
+  else if (story.step === 4) setStoryObjective('Survive the Ashbound sentry’s ambush. Cinder will stay close.');
+  else setStoryObjective('Follow Cinder to the drowned chapel. Find out why the buried bell is ringing.', 'CHAPTER I · THE DROWNED BELL');
+  const count = Number(story.doorClue) + Number(story.wellClue);
+  if (story.step === 0) storyNoteEl.dataset.clues = `${count}/2 VILLAGE CLUES FOUND`;
+  document.body.classList.toggle('story-combat', story.step >= 4);
+  $('#help').innerHTML = story.step < 4
+    ? 'WASD move · mouse look<br>E inspect · search the village<br>Esc pause'
+    : 'WASD move · mouse look<br>left click light · right click heavy<br>space dodge · Q guard/parry · R ranged<br>F ultimate · E interact · Tab lock-on<br>1/2 weapon · 3 stance · C companion<br>V stealth · J skills · M map · Esc pause';
+}
+function storySpeak(speaker, line, dur=4.5) {
+  say(speaker, line, dur);
+}
+function maybeRevealCinder() {
+  if (story.doorClue && story.wellClue && story.step === 0) {
+    story.step = 1;
+    if (storyDog) storyDog.visible = true;
+    setStoryObjective('Find the source of the barking near the collapsed storehouse.');
+    announce('A SOUND IN THE ASH');
+    storySpeak('MARA', 'There are no bodies. Every room was emptied, not simply burned.');
+    storySpeak('ORIN', 'Then they took the villagers alive. Elara too.');
+    storySpeak('MARA', 'Listen. Something is still here.');
+    sfx('magic');
+    if (storyDog) storyDog.position.set(5,0,-3.2);
+    saveGame();
+  }
+  refreshStoryObjective();
+}
+function buildStoryHouse(x,z,s=1,openSide=1) {
+  const root = group(); root.position.set(x,0,z); root.scale.setScalar(s); scene.add(root);
+  const char = mat('#242321',.95), soot = mat('#35332e',.98), charWood = mat('#302720',.96), stone = mat('#3c3d3a',.95);
+  box(4.4,.26,3.6,stone,0,.14,0,root);
+  box(.22,2.5,3.45,char,-2.05,1.35,0,root);
+  box(.22,2.5,3.45,soot,2.05,1.35,0,root);
+  box(4.1,2.5,.22,char,0,1.35,-1.65,root);
+  if(openSide>0) box(1.15,2.5,.2,soot,-.85,1.35,1.65,root);
+  else box(1.1,2.5,.2,soot,.85,1.35,1.65,root);
+  const beams = [
+    [-1.95,2.65,-1.55,.16,4.1,.16,.08],
+    [1.85,2.2,-1.5,.15,3.6,.15,-.19],
+    [-.2,3.2,-1.35,4.5,.18,.2,-.12],
+    [1.0,2.8,.25,3.1,.16,.16,.37],
+    [-1.25,2.25,.25,2.9,.14,.17,-.48],
+    [.5,2.15,-.65,2.2,.14,.15,.6]
+  ];
+  for (const [bx,by,bz,bw,bh,bd,rz] of beams) { const beam=box(bw,bh,bd,charWood,bx,by,bz,root); beam.rotation.z=rz; }
+  for(let i=0;i<9;i++){
+    const rubble=sphere(.18+Math.random()*.22, i%2?char:stone,(Math.random()-.5)*5,.12,z?0:0,root);
+    rubble.position.z=(Math.random()-.5)*4;
+    rubble.scale.set(1,.45,.75);
+  }
+  return root;
+}
+function createStoryDog() {
+  const root = group();
+  const fur = mat('#4b4034',.97), furLight = mat('#71604c',.95), shadowFur = mat('#241f1b',.98), eye = mat('#e9b765',.4,.1), collar = mat('#587b88',.76), tag = mat('#b18a50',.4,.5);
+  const body=sphere(.43,fur,0,.72,0,root); body.scale.set(1.35,.78,1.65);
+  const chest=sphere(.3,furLight,0,.66,.34,root); chest.scale.set(1,.9,1.2);
+  const head=sphere(.31,fur,0,1.0,.63,root); head.scale.set(.96,.91,.9);
+  const snout=sphere(.17,furLight,0,.85,.88,root); snout.scale.set(1,.72,1.25);
+  sphere(.075,shadowFur,0,.87,1.04,root);
+  for(const side of [-1,1]){
+    const ear=sphere(.11,shadowFur,side*.21,1.23,.55,root); ear.scale.set(.58,1.5,.65); ear.rotation.z=-side*.19;
+    sphere(.045,eye,side*.13,1.035,.86,root);
+    const leg=cylinder(.07,.095,.48,fur,side*.25,.31,.34,root,8);leg.rotation.z=side*.04;
+    const leg2=cylinder(.07,.095,.45,fur,side*.25,.3,-.36,root,8);leg2.rotation.z=-side*.04;
+  }
+  const tailRoot=group(); tailRoot.position.set(0,.87,-.6); root.add(tailRoot); storyDogTail=tailRoot;
+  const tail=cylinder(.035,.075,.55,furLight,0,.16,-.2,tailRoot,8); tail.rotation.x=-.75;
+  const band=new THREE.Mesh(new THREE.TorusGeometry(.22,.055,8,14),collar); band.position.set(0,.87,.4); band.rotation.x=Math.PI/2; root.add(band);
+  sphere(.065,tag,0,.78,.61,root);
+  root.userData={body,head,tailRoot,walk:0};
+  root.position.set(5,0,-3.2); root.visible=false; scene.add(root);
+  return root;
+}
+function createStoryMara() {
+  const root=group(); root.position.set(2.2,0,8.5);
+  const coat=mat('#3d4f57',.88), scarf=mat('#9a5b45',.9), leather=mat('#4b3528',.94), brass=mat('#b18a50',.5,.4);
+  const body=cylinder(.32,.45,.86,coat,0,1.14,0,root,10);
+  const head=sphere(.255,mat('#b18a81'),0,1.83,.02,root);
+  const hood=new THREE.Mesh(new THREE.SphereGeometry(.3,10,8),mat('#28343a')); hood.scale.set(1,1.02,1); hood.position.set(0,1.94,-.06); root.add(hood);
+  const mantle= new THREE.Mesh(new THREE.ConeGeometry(.52,1.22,6),coat); mantle.position.set(0,1.04,-.24); mantle.rotation.x=-.15;root.add(mantle);
+  box(.16,.62,.15,leather,.38,1.03,.06,root); box(.19,.1,.18,brass,.38,1.28,.15,root);
+  const wrap=box(.53,.13,.43,scarf,0,1.52,.03,root);wrap.rotation.z=-.08;
+  for(const side of [-1,1]){
+    const arm=cylinder(.095,.12,.64,coat,side*.42,1.22,.02,root,8);arm.rotation.z=side*.12;
+    const leg=cylinder(.13,.16,.72,leather,side*.17,.4,0,root,8);leg.rotation.z=-side*.02;
+  }
+  sphere(.035,mat('#251d1b'),-.09,1.86,.245,root);sphere(.035,mat('#251d1b'),.09,1.86,.245,root);
+  root.userData={body,head,walk:0};scene.add(root);return root;
+}
+function buildStoryVillage() {
+  const burntGround=mat('#292a27',.98), soot=mat('#171817',.99), wood=mat('#34281f',.97), oldStone=mat('#494a45',.92), pale=mat('#b59b77',.9), blue=mat('#476a74',.82);
+  // Two collapsed homes and a narrow lane create a readable, walkable village space around the start.
+  buildStoryHouse(-10,3,1.15,1);
+  buildStoryHouse(10,-3,.92,-1);
+  const scorch1=sphere(3.2,burntGround,-7,.02,3);scorch1.scale.set(1,.035,1.2);
+  const scorch2=sphere(2.7,burntGround,7,.02,-2);scorch2.scale.set(1,.04,1.25);
+  // An overturned handcart marks a small shelter beside the second house.
+  const cart=group();cart.position.set(5.2,.25,-3.1);cart.rotation.y=.42;cart.rotation.z=.28;scene.add(cart);
+  box(1.7,.18,1.05,wood,0,.38,0,cart);box(.15,.75,.16,wood,-.75,.72,0,cart).rotation.z=-.28;box(.15,.75,.16,wood,.75,.72,0,cart).rotation.z=.3;
+  for(const side of [-1,1]){const wheel=new THREE.Mesh(new THREE.TorusGeometry(.34,.055,7,14),soot);wheel.position.set(side*.67,.05,.44);wheel.rotation.y=Math.PI/2;cart.add(wheel)}
+  for(let i=0;i<8;i++){const plank=box(.08,.08,1.4,wood,4.8+(Math.random()-.5)*1.5,.06,-3.2+(Math.random()-.5)*1.3);plank.rotation.y=Math.random()*1.2;plank.rotation.z=(Math.random()-.5)*.4}
+  // The dry well is the central visual anchor and a second investigative stop.
+  cylinder(1.05,1.25,.6,oldStone,-3,.3,-2.8,scene,12);
+  cylinder(.78,.82,.32,soot,-3,.72,-2.8,scene,12);
+  for(const side of [-1,1]){box(.12,1.15,.12,wood,-3+side*.84,1.14,-2.8);box(2,.1,.14,wood,-3,1.67,-2.8)}
+  const wellGlow=sphere(.12,mat('#2c4e53',.4,.2),-3,.79,-2.8);wellGlow.material.emissive=new THREE.Color('#143c43');wellGlow.material.emissiveIntensity=.4;
+  // A painted mark survives on a charred door frame, matching Elara's old stitching pattern.
+  const mark=box(.52,.34,.035,mat('#6e4a39'),-7.45,1.22,1.1);mark.rotation.z=.12;
+  const markLine1=box(.06,.34,.045,pale,-7.5,1.22,1.06);markLine1.rotation.z=.45;
+  const markLine2=box(.34,.06,.045,pale,-7.4,1.24,1.05);markLine2.rotation.z=-.18;
+  const markLine3=box(.23,.05,.045,blue,-7.44,1.16,1.04);markLine3.rotation.z=.65;
+  // The road north has pawprints, dragged ash, and a strip of blue cloth.
+  for(let i=0;i<11;i++){
+    const z=-6.2-i*.57, x=Math.sin(i*.68)*.62;
+    const print=sphere(.105,mat(i%2?'#242421':'#383832'),x,.018,z);print.scale.set(.72,.08,1.3);
+    const toe=sphere(.045,soot,x+.08,.021,z-.12);toe.scale.set(.75,.12,1.1);
+  }
+  for(let i=0;i<7;i++){const ash=sphere(.16+Math.random()*.18,burntGround,(Math.random()-.5)*2,.018,-9.4-Math.random()*2);ash.scale.set(1,.1,1.7)}
+  const sash=box(.1,.05,.65,blue,.45,.08,-11.2);sash.rotation.y=.52;sash.rotation.z=.14;
+  const ropePost=box(.24,2.1,.24,wood,0,1.0,-14.7);ropePost.rotation.z=.12;
+  const rope=box(.055,.055,3.1,mat('#8b7658'),.05,1.85,-14.8);rope.rotation.z=-.22;rope.rotation.y=.08;
+  const ropeEnd=sphere(.11,pale,1.35,1.55,-15.25);ropeEnd.scale.set(.5,.5,1.5);
+  // Ash pockets and ember points add movement and scale without external art files.
+  const fires=[[-8,.3,4.1],[8,.25,-4.4],[-10,.2,-1.2]];
+  for(const [x,y,z] of fires){
+    const flameMat=new THREE.MeshStandardMaterial({color:'#ec8b48',emissive:'#b54216',emissiveIntensity:1.2,roughness:.55});
+    const flame=new THREE.Mesh(new THREE.ConeGeometry(.22,.75,7),flameMat);flame.position.set(x,y+.45,z);scene.add(flame);
+    const ember=sphere(.12,mat('#ffbf74',.4),x,y+.18,z);ember.material.emissive=new THREE.Color('#d94e19');ember.material.emissiveIntensity=.85;
+    const light=new THREE.PointLight('#ff9b5d',1.2,9,2);light.position.set(x,y+1,z);scene.add(light);storyFireLights.push({light,flame,ember,base:1.2,phase:Math.random()*6});
+  }
+  for(let n=0;n<10;n++){
+    const smMat=new THREE.MeshStandardMaterial({color:'#66635c',roughness:1,transparent:true,opacity:.12,depthWrite:false});
+    const puff=new THREE.Mesh(new THREE.SphereGeometry(.34+(n%3)*.1,8,7),smMat);puff.position.set(fires[n%fires.length][0]+(Math.random()-.5)*.5,1.3+(n%4)*.5,fires[n%fires.length][2]+(Math.random()-.5)*.4);puff.scale.set(1.1,1.45,1.0);scene.add(puff);
+    storySmoke.push({mesh:puff,baseY:puff.position.y,phase:Math.random()*6,baseX:puff.position.x});
+  }
+  storyDog=createStoryDog();
+  storyMara=createStoryMara();
+  storyInteractables.door=makeInteract(-7.2,0,1.2,'Examine Elara’s mark',()=>{
+    if(!story.doorClue){story.doorClue=true;story.clueCount++;announce('CLUE FOUND · THE MARK');storySpeak('ORIN','Elara carved this by our door when she was small. Three lines, one loop.');storySpeak('MARA','Then whoever came here knew exactly which house to search.');maybeRevealCinder();saveGame();}
+    else storySpeak('ORIN','Her mark. I used to tell her it would outlast the house.');
+  });
+  storyInteractables.well=makeInteract(-3,0,-2.7,'Inspect the dry well',()=>{
+    if(!story.wellClue){story.wellClue=true;story.clueCount++;announce('CLUE FOUND · NO BODIES');storySpeak('MARA','The water is untouched. No bodies, no blood, no signs of a fight.');storySpeak('ORIN','A village does not empty itself. Someone took them.');maybeRevealCinder();saveGame();}
+    else storySpeak('MARA','The well is dry. Someone even took the bucket.');
+  });
+  storyInteractables.dog=makeInteract(5,0,-3.2,'Approach the soot-covered hound',()=>{
+    if(!story.doorClue||!story.wellClue){storyNote('search the marked doorway and the dry well first');return;}
+    if(!story.dogMet){story.dogMet=true;story.step=2;if(storyDog){storyDog.visible=true;storyDog.position.set(5,0,-3.2)};if(storyDogTail)storyDogTail.rotation.x=-.4;announce('COMPANION FOUND · CINDER');tone(180,.12,'sine',.03);storySpeak('ORIN','Cinder? You were supposed to be with Elara.');storySpeak('MARA','He waited here. He knows you.');storySpeak('ORIN','Find her, old friend. Show me where they went.');storySpeak('CINDER','');refreshStoryObjective();saveGame();}
+    else storySpeak('MARA','Cinder has caught the scent again. Stay close to him.');
+  });
+  storyInteractables.trail=makeInteract(0,0,-11.15,'Inspect the pawprints and blue cloth',()=>{
+    if(!story.dogMet){storyNote('something is barking near the collapsed storehouse');return;}
+    if(!story.trailClue){story.trailClue=true;story.step=3;announce('CLUE FOUND · THE TRAIL');storySpeak('MARA','That is Elara’s blue sash. The stitch matches the mark on the door.');storySpeak('ORIN','The prints head for the causeway. Whoever took her wanted the bell to draw us after them.');storySpeak('MARA','Or they want someone to follow. Those are not the same thing.');refreshStoryObjective();saveGame();}
+    else storySpeak('MARA','The trail points north. Keep your eyes on the ground.');
+  });
+  storyInteractables.rope=makeInteract(0,0,-14.8,'Inspect the broken signal rope',()=>{
+    if(!story.trailClue){storyNote('inspect the pawprints and Elara’s blue cloth first');return;}
+    if(!story.firstEnemyStarted){story.ropeClue=true;story.firstEnemyStarted=true;story.step=4;triggerStoryFirstEncounter();saveGame();}
+    else storyNote('the ambush has already begun');
+  });
+}
+function triggerStoryFirstEncounter() {
+  if (story.firstEnemyDead) return;
+  setStoryObjective('Survive the Ashbound sentry’s ambush. Cinder will stay close.');
+  announce('AMBUSH · ASHBOUND SENTINEL');
+  storySpeak('MARA','Orin. Behind the broken gate. Something moved.');
+  storySpeak('ASHBOUND SENTINEL','No names leave the river. Not again.');
+  storySpeak('ORIN','Where is Elara? Tell me what you did with her.');
+  const e=spawnEnemy('fast',0,-22.2);
+  e.storyFirstSentinel=true;
+  e.stun=3.2;
+  e.attackCd=1.8;
+  e.windup=0;
+  storyEncounterLock=2.2;
+  storyCinematic={active:true,mode:'encounter',elapsed:0,duration:2.2};
+  storyCinematicEl.querySelector('.storyOverline').textContent='THE ASHBOUND';
+  storyCinematicEl.querySelector('.storyTitle').textContent='FIRST CONTACT';
+  storyCinematicEl.querySelector('.storySub').textContent='THE DEAD DO NOT WALK ALONE';
+  storyCinematicEl.classList.remove('fading');
+  storyCinematicEl.style.display='flex';
+  requestAnimationFrame(()=>storyCinematicEl.classList.add('active'));
+  document.body.classList.add('story-combat');
+}
+function completeStoryFirstEncounter() {
+  if(story.firstEnemyDead)return;
+  story.firstEnemyDead=true;
+  story.step=5;
+  storyEncounterLock=0;
+  announce('THE ROAD IS OPEN');
+  storySpeak('ORIN','You were guarding the road, not the village.');
+  storySpeak('MARA','The trail ends at the drowned chapel. If the bell is calling names, Elara may be there.');
+  storySpeak('ORIN','Then we follow it.');
+  setStoryObjective('Follow Cinder to the drowned chapel. Find out why the buried bell is ringing.','CHAPTER I · THE DROWNED BELL');
+  $('#allyStatus').textContent='CINDER · FOLLOWING';
+  saveGame();
+}
+function applyStoryActors() {
+  if(storyDog){
+    storyDog.visible=story.dogMet||(story.doorClue&&story.wellClue);
+    if(!story.dogMet)storyDog.position.set(5,0,-3.2);
+    else if(!storySaveRestoring && storyDog.position.lengthSq()<.01)storyDog.position.set(5,0,-3.2);
+  }
+  if(storyMara && player && !storyCinematic.active)storyMara.visible=true;
+  refreshStoryObjective();
+}
+function updateStoryDog(dt) {
+  if(!storyDog||!storyDog.visible)return;
+  storyClock+=dt;
+  const u=storyDog.userData;
+  if(story.dogMet&&player&&gameStarted){
+    const yaw=player.rotation.y;
+    let target;
+    if(story.step>=2&&story.step<=4){
+      target=new THREE.Vector3(player.position.x+Math.sin(yaw)*1.75,0,player.position.z+Math.cos(yaw)*1.75);
+    } else {
+      target=new THREE.Vector3(player.position.x-Math.sin(yaw)*1.35,0,player.position.z-Math.cos(yaw)*1.35);
+    }
+    const dist=storyDog.position.distanceTo(target);
+    if(dist>7)storyDog.position.lerp(target,Math.min(1,dt*4.5));
+    else storyDog.position.lerp(target,1-Math.pow(.002,dt*(dist>2.2?2.8:1.7)));
+    const dx=target.x-storyDog.position.x,dz=target.z-storyDog.position.z;
+    if(dx*dx+dz*dz>.025)storyDog.rotation.y=Math.atan2(dx,dz);
+    const moving=dist>.75;
+    u.walk+=dt*(moving?10:3);
+    u.body.position.y=.72+(moving?Math.abs(Math.sin(u.walk))*.045:Math.sin(storyClock*2)*.012);
+    u.head.rotation.x=moving?Math.sin(u.walk)*.035:Math.sin(storyClock*1.4)*.025;
+    if(storyDogTail)storyDogTail.rotation.x=-.5+Math.sin(storyClock*6)*.23;
+  } else if(storyDogTail)storyDogTail.rotation.x=-.15+Math.sin(storyClock*2)*.07;
+}
+function updateStoryMara(dt) {
+  if(!storyMara||!player||!gameStarted||storyCinematic.active)return;
+  const yaw=player.rotation.y;
+  const target=new THREE.Vector3(player.position.x+Math.sin(yaw+Math.PI/2)*2.3-Math.sin(yaw)*1.1,0,player.position.z+Math.cos(yaw+Math.PI/2)*2.3-Math.cos(yaw)*1.1);
+  const dist=storyMara.position.distanceTo(target);
+  if(dist>2.7)storyMara.position.lerp(target,1-Math.pow(.001,dt*(dist>8?4:1.6)));
+  const dx=player.position.x-storyMara.position.x,dz=player.position.z-storyMara.position.z;
+  if(dx*dx+dz*dz>.1)storyMara.rotation.y=Math.atan2(dx,dz);
+  storyMara.userData.walk=(storyMara.userData.walk||0)+dt*7;
+  storyMara.userData.body.position.y=1.14+(dist>1.1?Math.abs(Math.sin(storyMara.userData.walk))*.025:0);
+}
+function updateStoryEnvironment(dt) {
+  storyClock+=dt*.35;
+  for(const f of storyFireLights){
+    const flicker=.85+Math.sin(storyClock*9+f.phase)*.14+Math.sin(storyClock*17+f.phase)*.08;
+    f.light.intensity=f.base*flicker;
+    f.flame.scale.y=.75+flicker*.15;
+    f.flame.rotation.z=Math.sin(storyClock*6+f.phase)*.08;
+    f.ember.material.emissiveIntensity=.6+flicker*.3;
+  }
+  for(const p of storySmoke){
+    p.mesh.position.y=p.baseY+((storyClock+p.phase)%3.8)*.34;
+    p.mesh.position.x=p.baseX+Math.sin(storyClock*1.4+p.phase)*.25;
+    p.mesh.material.opacity=.06+.07*(.5+.5*Math.sin(storyClock*2+p.phase));
+  }
+  updateStoryDog(dt);
+  updateStoryMara(dt);
+}
+function updateStoryCinematic(dt) {
+  if(!storyCinematic.active)return false;
+  storyCinematic.elapsed+=dt;
+  const t=storyCinematic.elapsed, duration=storyCinematic.duration;
+  if(storyCinematic.mode==='opening'){
+    const shots=[
+      {at:0,cam:new THREE.Vector3(-11,3.5,8),look:new THREE.Vector3(-8,1.5,2)},
+      {at:2.1,cam:new THREE.Vector3(-7,4.1,2),look:new THREE.Vector3(-1,1.5,5)},
+      {at:4.25,cam:new THREE.Vector3(5,3.7,6),look:new THREE.Vector3(0,1.2,8)},
+      {at:6.2,cam:new THREE.Vector3(2.8,2.9,15),look:new THREE.Vector3(0,1.35,8)},
+      {at:duration,cam:new THREE.Vector3(0,4.3,16),look:new THREE.Vector3(0,1.1,8)}
+    ];
+    let i=0;while(i<shots.length-2&&t>shots[i+1].at)i++;
+    const a=shots[i],b=shots[i+1],f=THREE.MathUtils.clamp((t-a.at)/(b.at-a.at),0,1),smooth=f*f*(3-2*f);
+    camera.position.copy(a.cam).lerp(b.cam,smooth);camera.lookAt(a.look.clone().lerp(b.look,smooth));
+    if(t>duration*.63)storyCinematicEl.classList.add('fading');
+    if(t>=duration){
+      storyCinematic.active=false;story.openingDone=true;story.openingSeen=true;
+      storyCinematicEl.classList.remove('active');storyCinematicEl.style.display='none';storyCinematicEl.classList.remove('fading');
+      storyCameraYaw=Math.PI;camera.rotation.set(0,0,0);camera.position.set(player.position.x,4.2,player.position.z+8);camera.lookAt(player.position.x,1.3,player.position.z);
+      setStoryObjective('Search the burned village for signs of Elara. Examine the marked doorway and the dry well.');
+      storySpeak('MARA','Let us search before the rain covers what is left.');
+      storyNote('look for the e-shaped mark on the doorway and the dry village well',4.5);
+      applyStoryActors();saveGame();return true;
+    }
+  } else {
+    const playerZ=player?.position.z??-15;
+    const start=new THREE.Vector3(-3.2,2.6,playerZ+3.8), end=new THREE.Vector3(0,3.1,playerZ+7.5);
+    const f=THREE.MathUtils.clamp(t/duration,0,1);
+    camera.position.copy(start).lerp(end,f*f*(3-2*f));
+    camera.lookAt(new THREE.Vector3(0,1.1,playerZ-6).lerp(new THREE.Vector3(0,1.1,playerZ-4),f));
+    if(t>=duration){
+      storyCinematic.active=false;storyCinematicEl.classList.remove('active');storyCinematicEl.classList.remove('fading');storyCinematicEl.style.display='none';
+      storyCameraYaw=Math.PI;camera.rotation.set(0,0,0);camera.position.set(player.position.x,4.2,player.position.z+8);camera.lookAt(player.position.x,1.3,player.position.z);
+      storyEncounterLock=0;storyNote('left click light · right click heavy · space dodge · q guard',4);
+    }
+  }
+  return true;
+}
+function updateStorySystems(dt) {
+  updateStoryEnvironment(dt);
+  if(story.step<3&&player&&player.position.z<-15){player.position.z=-15;}
+  if(story.step<5&&player&&player.position.z<-20){player.position.z=-20;}
+  if(storyCinematic.active)storyEncounterLock=Math.max(0,storyEncounterLock-dt);
+  if(story.step===1 && storyDog && storyDog.visible){
+    if(Math.random()<dt*.22)tone(410,.07,'sine',.012);
+  }
+  if(story.step===4&&story.firstEnemyStarted&&!story.firstEnemyDead){
+    const e=enemies.find(e=>e.storyFirstSentinel&&e.alive);
+    if(!e && !story.firstEnemyDead)completeStoryFirstEncounter();
+  }
+  if(story.dogMet)$('#allyStatus').textContent=story.step>=5?'CINDER · FOLLOWING':'CINDER · TRACKING';
+  else $('#allyStatus').textContent=(story.doorClue&&story.wellClue)?'CINDER · NEARBY':'MARA · NEARBY';
+  refreshStoryObjective();
+}
+
+const originalStoryBuildWorld=buildWorld;
+buildWorld=function(){originalStoryBuildWorld();buildStoryVillage();};
+const originalStoryBuildRegions=buildExpandedRegions;
+buildExpandedRegions=function(){
+  originalStoryBuildRegions();
+  for(const e of enemies){if(e.alive&&!e.boss){e.alive=false;if(e.mesh)scene.remove(e.mesh);}}
+};
+const originalStoryNextLine=nextLine;
+nextLine=function(){
+  if(dialogueTimer>0||!dialogueQueue.length)return;
+  const d=dialogueQueue[0];
+  originalStoryNextLine();
+  if(!d)return;
+  const wordCount=d.line.trim().split(/\s+/).filter(Boolean).length;
+  dialogueTimer=Math.max(dialogueTimer,Math.min(11,wordCount/2.25+.7));
+  if(state.voice!==false&&'speechSynthesis' in window&&d.line){
+    try{
+      window.speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(d.line);
+      u.rate=d.speaker==='ORIN'?.87:d.speaker==='MARA'?.96:.9;
+      u.pitch=d.speaker==='ORIN'?.78:d.speaker==='MARA'?1.07:.9;
+      u.volume=.9;
+      const voices=window.speechSynthesis.getVoices();
+      const preferred=voices.find(v=>d.speaker==='MARA'?/female|samantha|victoria|zira/i.test(v.name):/male|daniel|alex|david/i.test(v.name));
+      if(preferred)u.voice=preferred;
+      window.speechSynthesis.speak(u);
+    }catch{}
+  }
+};
+const originalStorySaveGame=saveGame;
+saveGame=function(){
+  originalStorySaveGame();
+  try{
+    const data=JSON.parse(localStorage.getItem('ashenOathSave')||'{}');
+    data.story={step:story.step,doorClue:story.doorClue,wellClue:story.wellClue,dogMet:story.dogMet,trailClue:story.trailClue,ropeClue:story.ropeClue,firstEnemyStarted:story.firstEnemyStarted,firstEnemyDead:story.firstEnemyDead,openingDone:story.openingDone,openingSeen:story.openingSeen,clueCount:story.clueCount};
+    data.voice=state.voice!==false;
+    localStorage.setItem('ashenOathSave',JSON.stringify(data));
+  }catch{}
+};
+const originalStoryLoadGame=loadGame;
+loadGame=function(){
+  const ok=originalStoryLoadGame();
+  if(!ok)return false;
+  try{
+    const d=JSON.parse(localStorage.getItem('ashenOathSave')||'{}');
+    state.voice=d.voice!==false;
+    if(d.story)Object.assign(story,d.story);
+  }catch{}
+  return true;
+};
+const originalStoryUpdatePlayer=updatePlayer;
+document.addEventListener('mousemove',e=>{if(document.pointerLockElement===renderer?.domElement&&!paused&&gameStarted)storyCameraYaw-=e.movementX*.002*state.mouseSensitivity;});
+updatePlayer=function(dt){
+  if(updateStoryCinematic(dt))return;
+  if(storyEncounterLock>0){storyEncounterLock=Math.max(0,storyEncounterLock-dt);return;}
+  if(camera)camera.rotation.y=storyCameraYaw;
+  originalStoryUpdatePlayer(dt);
+};
+const originalStoryUpdateExpandedLoop=updateExpandedLoop;
+updateExpandedLoop=function(dt){originalStoryUpdateExpandedLoop(dt);updateStorySystems(dt);};
+const originalStoryDamageEnemy=damageEnemy;
+damageEnemy=function(e,d,heavy=false){
+  const wasAlive=e?.alive;
+  originalStoryDamageEnemy(e,d,heavy);
+  if(wasAlive&&e&&!e.alive&&e.storyFirstSentinel&&!story.firstEnemyDead)completeStoryFirstEncounter();
+};
+const originalStoryAttack=attack;
+attack=function(kind){if(story.step<4){tip('there is no enemy here. search the village first.');return;}originalStoryAttack(kind);};
+const originalStoryDodge=dodge;
+dodge=function(){if(story.step<4)return;originalStoryDodge();};
+const originalStoryGuard=guard;
+guard=function(){if(story.step<4)return;originalStoryGuard();};
+const originalStoryRanged=ranged;
+ranged=function(){if(story.step<4)return;originalStoryRanged();};
+const originalStorySpecial=special;
+special=function(){if(story.step<4)return;originalStorySpecial();};
+const originalStoryInteract=interact;
+interact=function(){
+  let nearest=null,dist=3;
+  for(const o of interactables){const d=Math.hypot(o.x-player.position.x,o.z-player.position.z);if(d<dist){nearest=o;dist=d}}
+  if(nearest&&nearest.label==='Ring the drowned bell'&&story.step<5){storyNote('the bell can wait. follow cinder and learn what happened here.');return;}
+  originalStoryInteract();
+};
+const originalStoryShowSettings=showSettings;
+showSettings=function(){
+  originalStoryShowSettings();
+  const p=$('#sound')?.closest('p');
+  if(p&&!$('#voice')){
+    const row=document.createElement('p');row.innerHTML='<label><input id="voice" type="checkbox" checked> spoken dialogue (uses your browser voice)</label>';p.parentNode.insertBefore(row,p.nextSibling);
+    $('#voice').checked=state.voice!==false;
+    $('#saveSettings').onclick=()=>{state.difficulty=$('#diff').value;state.sound=$('#sound').checked;state.voice=$('#voice').checked;state.damageNumbers=$('#numbers').checked;state.maxHp=state.difficulty==='story'?130:100;state.hp=Math.min(state.hp,state.maxHp);if(state.difficulty==='hard')enemies.forEach(e=>e.damage*=1.25);else if(state.difficulty==='story')enemies.forEach(e=>e.damage*=.7);$('#backMenu').click();saveGame()};
+  }
+};
+const originalStoryStartNew=startNew;
+startNew=function(){
+  story.reset();storyCinematic={active:false,mode:'opening',elapsed:0,duration:7.8};storyEncounterLock=0;
+  if('speechSynthesis' in window)window.speechSynthesis.cancel();
+  originalStoryStartNew();
+  dialogueQueue.length=0;dialogueTimer=0;
+  if(player)player.position.set(0,0,8.3);
+  if(storyDog){storyDog.visible=false;storyDog.position.set(5,0,-3.2);}
+  if(storyDogTail)storyDogTail.rotation.x=0;
+  if(storyMara)storyMara.position.set(2.2,0,8.5);
+  storyCinematic={active:true,mode:'opening',elapsed:0,duration:7.8};
+  storyCinematicEl.querySelector('.storyOverline').textContent='A GAME OF ASH & MEMORY';
+  storyCinematicEl.querySelector('.storyTitle').textContent='PROLOGUE';
+  storyCinematicEl.querySelector('.storySub').textContent='ASHES BEFORE DAWN';
+  storyCinematicEl.style.display='flex';storyCinematicEl.classList.remove('fading');
+  requestAnimationFrame(()=>storyCinematicEl.classList.add('active'));
+  storyCameraYaw=Math.PI;camera.position.set(-11,3.5,8);camera.lookAt(-8,1.5,2);
+  setStoryObjective('Search the burned village for signs of Elara. Examine the marked doorway and the dry well.');
+  announce('PROLOGUE · ASHES BEFORE DAWN');
+  storySpeak('ORIN','Three nights. No smoke, no birds. Just that bell under the river.');
+  storySpeak('MARA','Bells do not ring beneath water.');
+  storySpeak('ORIN','Neither do the dead. I checked.');
+  storySpeak('MARA','You came back for your sister.');
+  storySpeak('ORIN','I came back because I heard her whistle.');
+  story.introLinesQueued=true;
+  refreshStoryObjective();saveGame();
+};
+const originalStoryContinue=continueGame;
+continueGame=function(){
+  originalStoryContinue();
+  if(!gameStarted)return;
+  dialogueQueue.length=0;dialogueTimer=0;
+  storyCinematic={active:false,mode:'opening',elapsed:0,duration:7.8};
+  storyCinematicEl.classList.remove('active','fading');storyCinematicEl.style.display='none';
+  applyStoryActors();
+  if(story.step<5){refreshStoryObjective();if(story.step===4&&story.firstEnemyStarted&&!story.firstEnemyDead&&!enemies.some(e=>e.storyFirstSentinel&&e.alive)){const e=spawnEnemy('fast',0,-22.2);e.storyFirstSentinel=true;e.stun=1.5;}}
+  else {refreshStoryObjective();if(storyDog)storyDog.visible=true;}
+  if(!story.openingDone){storyCinematic={active:true,mode:'opening',elapsed:0,duration:7.8};storyCinematicEl.style.display='flex';storyCinematicEl.classList.remove('fading');requestAnimationFrame(()=>storyCinematicEl.classList.add('active'));}
+  else if(story.step<5)storySpeak('MARA','Let us pick up the trail where we left it.');
+  else storySpeak('MARA','Cinder still has the trail. The chapel is north.');
+  saveGame();
+};
+
+
+setup();bindControls();bindExpandedInputs();loop();
+$('#newGame').onclick=startNew;$('#continueGame').onclick=continueGame;$('#settings').onclick=showSettings;$('#continueGame').disabled=!localStorage.getItem('ashenOathSave');
+</script>
+</body>
+</html>
